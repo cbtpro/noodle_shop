@@ -27,6 +27,6 @@ public class OrderController {
      */
     @PostMapping("/calculate")
     public ApiResponseBody<OrderResultVO> calculateOrder(@RequestBody List<OrderItemRequestVO> items) {
-        return ApiResponseBody.success(orderService.calc(items));
+        return ApiResponseBody.success(orderService.dealOrder(items));
     }
 }

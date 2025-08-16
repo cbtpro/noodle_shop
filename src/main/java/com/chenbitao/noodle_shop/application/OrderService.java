@@ -34,7 +34,7 @@ public class OrderService {
         return billingService.calculateWithoutDiscount(order);
     }
 
-    public OrderResultVO calc(List<OrderItemRequestVO> items) {
+    public OrderResultVO dealOrder(List<OrderItemRequestVO> items) {
         try {
             Order order = new Order();
             for (OrderItemRequestVO item : items) {
