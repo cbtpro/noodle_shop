@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class NoodleShopApplicationTests {
 
 	@Autowired
-    private OrderService orderService;
+	private OrderService orderService;
 
 	@Test
 	void contextLoads() {

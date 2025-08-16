@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -53,11 +54,9 @@ public class BillingServiceImpl implements BillingService {
         DiscountRule appliedRule = null;
 
         for (DiscountRule rule : rules) {
-            if (discountBase.compareTo(rule.getThreshold()) >= 0) {
-                if (rule.getDiscount().compareTo(discount) > 0) {
-                    discount = rule.getDiscount();
-                    appliedRule = rule;
-                }
+            if (discountBase.compareTo(rule.getThreshold()) >= 0 && rule.getDiscount().compareTo(discount) > 0) {
+                discount = rule.getDiscount();
+                appliedRule = rule;
             }
         }
 
@@ -91,20 +90,15 @@ public class BillingServiceImpl implements BillingService {
 
     /** 判断订单里是否还可以再用一个套餐 */
     public boolean canApplyCombine(Order order, Combine combine) {
-        Map<OrderItem, Integer> orderItems = order.getItems();
+        // 先把订单里的 itemId -> count 映射出来，方便快速查找
+        Map<String, Integer> orderCountMap = order.getItems().entrySet().stream()
+                .collect(Collectors.toMap(e -> e.getKey().getId(), Map.Entry::getValue));
+
+        // 检查套餐里的每个商品是否都存在，且数量 >= 1
         for (String goodsId : combine.getItems()) {
-            boolean found = false;
-            for (OrderItem item : orderItems.keySet()) {
-                if (item.getId().equals(goodsId)) {
-                    if (orderItems.get(item) < 1) { // 每个套餐项默认数量1
-                        return false;
-                    }
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                return false; // 订单中没有这个商品
+            Integer count = orderCountMap.get(goodsId);
+            if (count == null || count < 1) {
+                return false;
             }
         }
         return true;
@@ -112,13 +106,15 @@ public class BillingServiceImpl implements BillingService {
 
     /** 从订单中扣掉一个套餐对应的商品数量 */
     public void applyCombine(Order order, Combine combine) {
-        Map<OrderItem, Integer> orderItems = order.getItems();
+        // 构造 itemId -> OrderItem 的映射，方便快速查找
+        Map<String, OrderItem> orderItemMap = order.getItems().keySet().stream()
+                .collect(Collectors.toMap(OrderItem::getId, item -> item));
+
+        // 遍历套餐里的商品，逐个在订单中扣减
         for (String goodsId : combine.getItems()) {
-            for (OrderItem item : orderItems.keySet()) {
-                if (item.getId().equals(goodsId)) {
-                    order.removeItem(item, 1); // 每个套餐项默认扣掉数量1
-                    break;
-                }
+            OrderItem item = orderItemMap.get(goodsId);
+            if (item != null) {
+                order.removeItem(item, 1); // 每个套餐项默认扣掉数量1
             }
         }
     }

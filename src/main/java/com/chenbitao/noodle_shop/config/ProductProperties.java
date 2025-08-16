@@ -1,8 +1,6 @@
 package com.chenbitao.noodle_shop.config;
 
-import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
