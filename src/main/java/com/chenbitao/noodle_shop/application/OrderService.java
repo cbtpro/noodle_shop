@@ -8,11 +8,12 @@ import com.chenbitao.noodle_shop.domain.model.Money;
 import com.chenbitao.noodle_shop.domain.model.Order;
 import com.chenbitao.noodle_shop.service.BillingService;
 import com.chenbitao.noodle_shop.service.impl.BillingServiceImpl;
+import com.chenbitao.noodle_shop.vo.DiscountResult;
 
 public class OrderService {
     private final BillingService billingService = new BillingServiceImpl();
 
-    public Money calculateWithDiscount(Order order, List<DiscountRule> rules, List<MenuItem> excluded) {
+    public DiscountResult calculateWithDiscount(Order order, List<DiscountRule> rules, List<MenuItem> excluded) {
         return billingService.calculateWithDiscount(order, rules, excluded);
     }
 

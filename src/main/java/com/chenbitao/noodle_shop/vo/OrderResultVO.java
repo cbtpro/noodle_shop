@@ -17,4 +17,5 @@ public class OrderResultVO {
     private Money originalCost;
     private Money cost;
     private List<DiscountRule> rules;
+    private List<DiscountRule> appliedRules;
 }

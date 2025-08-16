@@ -8,6 +8,7 @@ import com.chenbitao.noodle_shop.domain.model.Holiday;
 import com.chenbitao.noodle_shop.domain.model.MenuItem;
 import com.chenbitao.noodle_shop.domain.model.Money;
 import com.chenbitao.noodle_shop.domain.model.Order;
+import com.chenbitao.noodle_shop.vo.DiscountResult;
 import com.chenbitao.noodle_shop.vo.OrderItemRequestVO;
 import com.chenbitao.noodle_shop.vo.OrderResultVO;
 
@@ -31,25 +32,35 @@ public class OrderController {
     public OrderResultVO calculateOrder(@RequestBody List<OrderItemRequestVO> items) {
         Order order = new Order();
         for (OrderItemRequestVO item : items) {
-            // 根据商品名获取 MenuItem，再添加对应数量
-            order.addItem(MenuItem.valueOf(item.getGood()), item.getCount());
+            int count = item.getCount();
+            if (count > 0) {
+                // 根据商品名获取 MenuItem，再添加对应数量
+                order.addItem(MenuItem.valueOf(item.getGood()), count);
+            }
         }
 
-        // 打折规则
+        // 判断是否节假日
+        LocalDate today = LocalDate.now();
+        boolean ifHoliday = Holiday.isHoliday(today);
+
+        // 设置打折规则
         List<DiscountRule> rules = Arrays.asList(
                 new DiscountRule(100, 15),
                 new DiscountRule(30, 5));
 
+        if (order.getItemTotal() == 0) {
+            // 如果订单为空，直接返回结果
+            return new OrderResultVO(ifHoliday, Money.ZERO, Money.ZERO, rules, null);
+        }
         // 不参与折扣的商品
         List<MenuItem> excluded = Arrays.asList(MenuItem.MILK_TEA);
-        // 判断是否节假日
-        LocalDate today = LocalDate.now();
-        boolean ifHoliday = Holiday.isHoliday(today);
         Money originalCost = orderService.calculateWithoutDiscount(order);
         Money cost = originalCost;
+        DiscountResult discountResult = null;
         if (ifHoliday) {
-            cost = orderService.calculateWithDiscount(order, rules, excluded);
+            discountResult = orderService.calculateWithDiscount(order, rules, excluded);
+            cost = discountResult.getFinalPrice();
         }
-        return new OrderResultVO(ifHoliday, originalCost, cost, rules);
+        return new OrderResultVO(ifHoliday, originalCost, cost, rules, discountResult.getApplied());
     }
 }
