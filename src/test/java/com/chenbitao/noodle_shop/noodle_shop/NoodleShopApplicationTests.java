@@ -5,7 +5,6 @@ import com.chenbitao.noodle_shop.domain.model.DiscountRule;
 import com.chenbitao.noodle_shop.domain.model.MenuItem;
 import com.chenbitao.noodle_shop.domain.model.Money;
 import com.chenbitao.noodle_shop.domain.model.Order;
-import com.chenbitao.noodle_shop.service.impl.BillingServiceImpl;
 import com.chenbitao.noodle_shop.vo.DiscountResult;
 
 import org.junit.jupiter.api.Test;
