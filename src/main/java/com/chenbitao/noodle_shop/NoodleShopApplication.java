@@ -1,4 +1,4 @@
-package com.chenbitao.noodle_shop.noodle_shop;
+package com.chenbitao.noodle_shop;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

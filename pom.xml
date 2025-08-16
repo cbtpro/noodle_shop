@@ -8,7 +8,7 @@
 		<version>3.4.8</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.chenbitao.noodle_shop</groupId>
+	<groupId>com.chenbitao</groupId>
 	<artifactId>noodle_shop</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>noodle_shop</name>
