@@ -13,9 +13,24 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderResultVO {
+    /**
+     * 是否节假日
+     */
     private boolean holiday;
+    /**
+     * 原价
+     */
     private Money originalCost;
+    /**
+     * 最终价格
+     */
     private Money cost;
+    /**
+     * 可用的折扣规则
+     */
     private List<DiscountRule> rules;
+    /**
+     * 生效的折扣规则
+     */
     private List<DiscountRule> appliedRules;
 }
