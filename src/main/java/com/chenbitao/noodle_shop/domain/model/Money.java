@@ -1,15 +1,35 @@
 package com.chenbitao.noodle_shop.domain.model;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 public class Money {
-    private final int amount;
+    public static final Money ZERO = new Money(BigDecimal.ZERO);
 
-    public Money(int amount) { this.amount = amount; }
+    private final BigDecimal amount;
 
-    public int getAmount() { return amount; }
+    public Money(double amount) {
+        this.amount = BigDecimal.valueOf(amount).setScale(2, RoundingMode.HALF_UP);
+    }
 
-    public Money add(Money other) { return new Money(this.amount + other.amount); }
-    public Money subtract(Money other) { return new Money(this.amount - other.amount); }
+    public Money(BigDecimal amount) {
+        this.amount = amount.setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public Money add(Money other) {
+        return new Money(this.amount.add(other.amount));
+    }
+
+    public Money subtract(Money other) {
+        return new Money(this.amount.subtract(other.amount));
+    }
 
     @Override
-    public String toString() { return amount + " 元"; }
+    public String toString() {
+        return amount.toPlainString() + " 元";
+    }
 }

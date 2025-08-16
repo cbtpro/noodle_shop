@@ -12,7 +12,11 @@ import com.chenbitao.noodle_shop.service.impl.BillingServiceImpl;
 public class OrderService {
     private final BillingService billingService = new BillingServiceImpl();
 
-    public Money calculateOrder(Order order, List<DiscountRule> rules, List<MenuItem> excluded) {
+    public Money calculateWithDiscount(Order order, List<DiscountRule> rules, List<MenuItem> excluded) {
         return billingService.calculateWithDiscount(order, rules, excluded);
+    }
+
+    public Money calculateWithoutDiscount(Order order) {
+        return billingService.calculateWithoutDiscount(order);
     }
 }

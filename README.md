@@ -6,6 +6,12 @@
 mvn spring-boot:run
 ```
 
+## 单元测试
+
+```
+mvn test
+```
+
 接口测试
 
 ```
