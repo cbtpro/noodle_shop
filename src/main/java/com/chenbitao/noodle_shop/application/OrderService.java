@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
 import com.chenbitao.noodle_shop.domain.model.DiscountRule;
 import com.chenbitao.noodle_shop.domain.model.Holiday;
 import com.chenbitao.noodle_shop.domain.model.MenuItem;
@@ -15,8 +17,13 @@ import com.chenbitao.noodle_shop.vo.DiscountResult;
 import com.chenbitao.noodle_shop.vo.OrderItemRequestVO;
 import com.chenbitao.noodle_shop.vo.OrderResultVO;
 
+@Service
 public class OrderService {
-    private final BillingService billingService = new BillingServiceImpl();
+    private final BillingService billingService;
+
+    public OrderService(BillingServiceImpl billingService) {
+        this.billingService = billingService;
+    }
 
     public DiscountResult calculateWithDiscount(Order order, List<DiscountRule> rules, List<MenuItem> excluded) {
         return billingService.calculateWithDiscount(order, rules, excluded);

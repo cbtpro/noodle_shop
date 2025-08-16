@@ -8,6 +8,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderItemRequestVO {
+    /**
+     * 商品
+     */
     private String good;
+    /**
+     * 数量
+     */
     private int count;
 }

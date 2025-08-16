@@ -10,6 +10,12 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class DiscountResult {
-    private Money finalPrice;             // 最终价格
-    private List<DiscountRule> applied;   // 符合条件的规则
+    /**
+     * 最终价格
+     */
+    private Money finalPrice;
+    /**
+     * 符合条件的规则
+     */
+    private List<DiscountRule> applied;
 }

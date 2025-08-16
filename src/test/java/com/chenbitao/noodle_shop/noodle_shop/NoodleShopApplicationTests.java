@@ -5,9 +5,11 @@ import com.chenbitao.noodle_shop.domain.model.DiscountRule;
 import com.chenbitao.noodle_shop.domain.model.MenuItem;
 import com.chenbitao.noodle_shop.domain.model.Money;
 import com.chenbitao.noodle_shop.domain.model.Order;
+import com.chenbitao.noodle_shop.service.impl.BillingServiceImpl;
 import com.chenbitao.noodle_shop.vo.DiscountResult;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
@@ -18,13 +20,15 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest
 class NoodleShopApplicationTests {
 
+	@Autowired
+    private OrderService orderService;
+
 	@Test
 	void contextLoads() {
 	}
 
 	@Test
 	public void testCalculateOrder() {
-		OrderService orderService = new OrderService();
 		Order order = new Order();
 		order.addItem(MenuItem.SET_MEAL_1);
 		order.addItem(MenuItem.BEEF_CAKE);
@@ -38,7 +42,6 @@ class NoodleShopApplicationTests {
 
 	@Test
 	public void testCalculateOrder1() {
-		OrderService orderService = new OrderService();
 		Order order = new Order();
 		order.addItem(MenuItem.INTESTINE_NOODLE_MEDIUM);
 		order.addItem(MenuItem.MILK_TEA, 2);
@@ -53,7 +56,6 @@ class NoodleShopApplicationTests {
 
 	@Test
 	public void testCalculateOrder2() {
-		OrderService orderService = new OrderService();
 		Order order = new Order();
 		order.addItem(MenuItem.INTESTINE_NOODLE_MEDIUM, 3);
 		order.addItem(MenuItem.MILK_TEA, 2);
@@ -68,7 +70,6 @@ class NoodleShopApplicationTests {
 
 	@Test
 	public void testNoDiscountApplied() {
-		OrderService orderService = new OrderService();
 		Order order = new Order();
 		order.addItem(MenuItem.BEEF_NOODLE_SMALL); // 14元
 		order.addItem(MenuItem.MILK_TEA); // 12元
@@ -83,7 +84,6 @@ class NoodleShopApplicationTests {
 
 	@Test
 	public void testDiscountExactlyAtThreshold() {
-		OrderService orderService = new OrderService();
 		Order order = new Order();
 		order.addItem(MenuItem.BEEF_NOODLE_LARGE); // 18元
 		order.addItem(MenuItem.INTESTINE_NOODLE_SMALL); // 16元
@@ -98,7 +98,6 @@ class NoodleShopApplicationTests {
 
 	@Test
 	public void testMultipleItemsExcluded() {
-		OrderService orderService = new OrderService();
 		Order order = new Order();
 		order.addItem(MenuItem.INTESTINE_NOODLE_MEDIUM, 2); // 36元
 		order.addItem(MenuItem.MILK_TEA, 2); // 24元
@@ -113,7 +112,6 @@ class NoodleShopApplicationTests {
 
 	@Test
 	public void testLargeQuantityDiscount() {
-		OrderService orderService = new OrderService();
 		Order order = new Order();
 		order.addItem(MenuItem.BEEF_NOODLE_LARGE, 5); // 90元
 		order.addItem(MenuItem.MILK_TEA, 2); // 24元
@@ -128,7 +126,6 @@ class NoodleShopApplicationTests {
 
 	@Test
 	public void testAllExcludedItems() {
-		OrderService orderService = new OrderService();
 		Order order = new Order();
 		order.addItem(MenuItem.BEEF_CAKE, 3); // 30元
 		order.addItem(MenuItem.MILK_TEA, 2); // 24元
