@@ -1,7 +1,10 @@
 package com.chenbitao.noodle_shop.service.impl;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 
 import com.chenbitao.noodle_shop.domain.model.*;
@@ -14,11 +17,11 @@ public class BillingServiceImpl implements BillingService {
     @Override
     public Money calculateTotal(Order order) {
         BigDecimal total = BigDecimal.ZERO;
-        for (MenuItem item : order.getItems().keySet()) {
+        for (OrderItem item : order.getItems().keySet()) {
             // 获取商品数量
             int count = order.getItemCount(item);
             // 商品价格
-            BigDecimal price = item.getPrice();
+            BigDecimal price = BigDecimal.valueOf(item.getPrice());
             // 累加每个商品的总价
             total = total.add(price.multiply(BigDecimal.valueOf(count)));
         }
@@ -27,7 +30,7 @@ public class BillingServiceImpl implements BillingService {
     }
 
     @Override
-    public DiscountResult calculateWithDiscount(Order order, List<DiscountRule> rules, List<MenuItem> excluded) {
+    public DiscountResult calculateWithDiscount(Order order, List<DiscountRule> rules, List<String> excluded) {
         // 计算订单原价，包括所有商品
         BigDecimal total = calculateTotal(order).getAmount();
 
@@ -37,9 +40,9 @@ public class BillingServiceImpl implements BillingService {
         }
         // 统计可参与折扣的金额，排除 excluded 中的商品
         BigDecimal discountBase = BigDecimal.ZERO;
-        for (MenuItem item : order.getItems().keySet()) {
-            if (excluded == null || !excluded.contains(item)) {
-                BigDecimal price = item.getPrice();
+        for (OrderItem item : order.getItems().keySet()) {
+            if (excluded == null || !excluded.contains(item.getId())) {
+                BigDecimal price = BigDecimal.valueOf(item.getPrice());
                 int count = order.getItemCount(item);
                 discountBase = discountBase.add(price.multiply(BigDecimal.valueOf(count)));
             }
@@ -68,35 +71,67 @@ public class BillingServiceImpl implements BillingService {
         return calculateTotal(order);
     }
 
-    // public Map<SetMeal, Integer> matchSetMeals(Order order, List<SetMeal> setMeals) {
-    //     Map<SetMeal, Integer> result = new HashMap<>();
+    public Map<Combine, Integer> matchSetMeals(Order order, List<Combine> combines) {
+        Map<Combine, Integer> result = new HashMap<>();
 
-    //     for (SetMeal setMeal : setMeals) {
-    //         int count = 0;
-    //         while (canApplySetMeal(order, setMeal)) {
-    //             applySetMeal(order, setMeal);
-    //             count++;
-    //         }
-    //         if (count > 0)
-    //             result.put(setMeal, count);
-    //     }
+        for (Combine combine : combines) {
+            int count = 0;
+            while (canApplyCombine(order, combine)) {
+                applyCombine(order, combine);
+                addCombine(order, combine);
+                count++;
+            }
+            if (count > 0) {
+                result.put(combine, count);
+            }
+        }
 
-    //     return result;
-    // }
+        return result;
+    }
 
     /** 判断订单里是否还可以再用一个套餐 */
-    // public boolean canApplySetMeal(Order order, SetMeal setMeal) {
-    //     for (Map.Entry<MenuItem, Integer> entry : setMeal.getItems().entrySet()) {
-    //         if (order.getItemCount(entry.getKey()) < entry.getValue())
-    //             return false;
-    //     }
-    //     return true;
-    // }
+    public boolean canApplyCombine(Order order, Combine combine) {
+        Map<OrderItem, Integer> orderItems = order.getItems();
+        for (String goodsId : combine.getItems()) {
+            boolean found = false;
+            for (OrderItem item : orderItems.keySet()) {
+                if (item.getId().equals(goodsId)) {
+                    if (orderItems.get(item) < 1) { // 每个套餐项默认数量1
+                        return false;
+                    }
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return false; // 订单中没有这个商品
+            }
+        }
+        return true;
+    }
 
     /** 从订单中扣掉一个套餐对应的商品数量 */
-    // public void applySetMeal(Order order, SetMeal setMeal) {
-    //     for (Map.Entry<MenuItem, Integer> entry : setMeal.getItems().entrySet()) {
-    //         order.removeItem(entry.getKey(), entry.getValue());
-    //     }
-    // }
+    public void applyCombine(Order order, Combine combine) {
+        Map<OrderItem, Integer> orderItems = order.getItems();
+        for (String goodsId : combine.getItems()) {
+            for (OrderItem item : orderItems.keySet()) {
+                if (item.getId().equals(goodsId)) {
+                    order.removeItem(item, 1); // 每个套餐项默认扣掉数量1
+                    break;
+                }
+            }
+        }
+    }
+
+    /**
+     * 从订单中增加一个套餐对应的套餐数量
+     */
+    public void addCombine(Order order, Combine combine) {
+        for (OrderItem item : order.getItems().keySet()) {
+            if (item.getId().equals(combine.getId())) {
+                order.addItem(item, 1); // 每个套餐项默认增加数量1
+                break;
+            }
+        }
+    }
 }

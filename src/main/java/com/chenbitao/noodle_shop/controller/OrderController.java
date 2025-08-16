@@ -9,6 +9,7 @@ import com.chenbitao.noodle_shop.vo.OrderResultVO;
 
 import java.util.List;
 
+
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
@@ -18,6 +19,16 @@ public class OrderController {
     public OrderController(OrderService orderService) {
         this.orderService = orderService;
     }
+
+
+    /**
+     * 订单合并配置
+     */
+    // @Autowired
+    // private OrderCombineConfig orderCombineConfig;
+
+    // @Autowired
+    // private ProductProperties productProperties;
 
     /**
      * 计算订单价格
@@ -29,4 +40,15 @@ public class OrderController {
     public ApiResponseBody<OrderResultVO> calculateOrder(@RequestBody List<OrderItemRequestVO> items) {
         return ApiResponseBody.success(orderService.dealOrder(items));
     }
+
+    // @GetMapping("/config")
+    // public ApiResponseBody<Boolean> getConfig() {
+    //     return ApiResponseBody.success(orderCombineConfig.isAuto());
+    // }
+    
+    // @GetMapping("/combine")
+    // public ApiResponseBody<List<Combine>> getCombineConfig() {
+    //     return ApiResponseBody.success(productProperties.getCombine());
+    // }
+    
 }

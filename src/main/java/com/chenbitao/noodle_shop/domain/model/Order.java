@@ -4,18 +4,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Order {
-    private final Map<MenuItem, Integer> items = new HashMap<>();
+    private final Map<OrderItem, Integer> items = new HashMap<>();
 
-    public void addItem(MenuItem item) {
+    public void addItem(OrderItem item) {
         addItem(item, 1);
     }
 
-    public void addItem(MenuItem item, int count) {
+    public void addItem(OrderItem item, int count) {
         items.put(item, items.getOrDefault(item, 0) + count);
     }
 
     /** 移除商品（用于套餐匹配） */
-    public void removeItem(MenuItem item, int count) {
+    public void removeItem(OrderItem item, int count) {
         int current = items.getOrDefault(item, 0);
         if (current <= count) {
             items.remove(item);
@@ -28,12 +28,12 @@ public class Order {
         return items.values().stream().mapToInt(Integer::intValue).sum();
     }
     /** 获取某个商品的数量 */
-    public int getItemCount(MenuItem item) {
+    public int getItemCount(OrderItem item) {
         return items.getOrDefault(item, 0);
     }
 
     /** 获取订单中所有商品 */
-    public Map<MenuItem, Integer> getItems() {
+    public Map<OrderItem, Integer> getItems() {
         return items;
     }
 }

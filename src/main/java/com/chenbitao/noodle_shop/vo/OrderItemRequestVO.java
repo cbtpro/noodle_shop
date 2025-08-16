@@ -1,5 +1,6 @@
 package com.chenbitao.noodle_shop.vo;
 
+import com.chenbitao.noodle_shop.enums.GoodsType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,11 +10,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class OrderItemRequestVO {
     /**
-     * 商品
+     * 商品ID
      */
-    private String good;
+    private String id;
+    /**
+     * 商品名称
+     */
+    private String goodName;
     /**
      * 数量
      */
     private int count;
+    /**
+     * 商品类型
+     */
+    private GoodsType type;
 }

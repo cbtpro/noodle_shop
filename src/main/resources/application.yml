@@ -1,0 +1,66 @@
+server:
+  port: 8888
+
+spring:
+  application:
+    name: noodle_shop
+  profiles:
+    active: dev
+
+app:
+  config:
+    order:
+      combine:
+        auto: true # 是否自动将商品组合成套餐
+
+logging:
+  level:
+    root: WARN
+    org.springframework: WARN
+    com.chenbitao.noodleshop: info
+
+product:
+  goods:
+    - id: beef_noodle_large
+      name: 大碗牛肉面
+      price: 18
+    - id: beef_noodle_medium
+      name: 中碗牛肉面
+      price: 16
+    - id: beef_noodle_small
+      name: 小碗牛肉面
+      price: 14
+    - id: intestine_noodle_large
+      name: 大碗肥肠面
+      price: 20
+    - id: intestine_noodle_medium
+      name: 中碗肥肠面
+      price: 18
+    - id: intestine_noodle_small
+      name: 小碗肥肠面
+      price: 16
+    - id: beef_cake
+      name: 牛肉饼
+      price: 10
+    - id: milk_tea
+      name: 奶茶
+      price: 12
+
+  combine:
+    - id: combine_1
+      name: 套餐1
+      price: 38
+      items:
+        - beef_noodle_large
+        - beef_cake
+        - milk_tea
+    - id: combine_2
+      name: 套餐2
+      price: 40
+      items:
+        - intestine_noodle_large
+        - beef_cake
+        - milk_tea
+  
+  non_discount_goods:
+    - milk_tea

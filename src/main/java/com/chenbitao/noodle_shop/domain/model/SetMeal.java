@@ -5,7 +5,7 @@ import java.util.Map;
 
 public class SetMeal {
     private final String name;
-    private final Map<MenuItem, Integer> items = new HashMap<>();
+    private final Map<Goods, Integer> items = new HashMap<>();
     private final Money price;
 
     public SetMeal(String name, Money price) {
@@ -14,7 +14,7 @@ public class SetMeal {
     }
 
     /** 添加套餐里的商品和数量 */
-    public void addItem(MenuItem item, int count) {
+    public void addItem(Goods item, int count) {
         items.put(item, count);
     }
 
@@ -29,13 +29,13 @@ public class SetMeal {
     }
 
     /** 获取套餐内所有商品和数量 */
-    public Map<MenuItem, Integer> getItems() {
+    public Map<Goods, Integer> getItems() {
         return items;
     }
 
     /** 判断订单是否能匹配这个套餐 */
     public boolean canApply(Order order) {
-        for (Map.Entry<MenuItem, Integer> entry : items.entrySet()) {
+        for (Map.Entry<Goods, Integer> entry : items.entrySet()) {
             if (order.getItemCount(entry.getKey()) < entry.getValue()) {
                 return false;
             }
@@ -45,7 +45,7 @@ public class SetMeal {
 
     /** 从订单中扣除套餐里的商品 */
     public void applyTo(Order order) {
-        for (Map.Entry<MenuItem, Integer> entry : items.entrySet()) {
+        for (Map.Entry<Goods, Integer> entry : items.entrySet()) {
             order.removeItem(entry.getKey(), entry.getValue());
         }
     }

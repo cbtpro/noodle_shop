@@ -3,9 +3,15 @@ package com.chenbitao.noodle_shop.application;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.chenbitao.noodle_shop.config.OrderCombineConfig;
+import com.chenbitao.noodle_shop.config.ProductProperties;
 import com.chenbitao.noodle_shop.domain.model.*;
+import com.chenbitao.noodle_shop.enums.GoodsType;
 import com.chenbitao.noodle_shop.exception.OrderCalculationException;
 import com.chenbitao.noodle_shop.service.BillingService;
 import com.chenbitao.noodle_shop.service.impl.BillingServiceImpl;
@@ -17,11 +23,20 @@ import com.chenbitao.noodle_shop.vo.OrderResultVO;
 public class OrderService {
     private final BillingService billingService;
 
+    /**
+     * 订单合并配置
+     */
+    @Autowired
+    private OrderCombineConfig orderCombineConfig;
+
+    @Autowired
+    private ProductProperties productProperties;
+
     public OrderService(BillingServiceImpl billingService) {
         this.billingService = billingService;
     }
 
-    public DiscountResult calculateWithDiscount(Order order, List<DiscountRule> rules, List<MenuItem> excluded) {
+    public DiscountResult calculateWithDiscount(Order order, List<DiscountRule> rules, List<String> excluded) {
         return billingService.calculateWithDiscount(order, rules, excluded);
     }
 
@@ -31,13 +46,39 @@ public class OrderService {
 
     public OrderResultVO dealOrder(List<OrderItemRequestVO> items) {
         try {
+            List<Goods> goods = productProperties.getGoods();
+            List<Combine> combines = productProperties.getCombine();
             Order order = new Order();
             for (OrderItemRequestVO item : items) {
                 int count = item.getCount();
                 if (count > 0) {
-                    // 根据商品名获取 MenuItem，再添加对应数量
-                    order.addItem(MenuItem.valueOf(item.getGood()), count);
+                    GoodsType goodType = item.getType();
+                    if (goodType == GoodsType.GOOD) {
+                        // 处理普通商品
+                        Goods good = goods.stream()
+                                .filter(g -> g.getId().equals(item.getId()))
+                                .findFirst()
+                                .orElseThrow(() -> new OrderCalculationException("商品不存在: " + item.getGoodName()));
+                        // 根据商品名获取 Goods，再添加对应数量
+                        if (good != null) {
+                            order.addItem(good, count);
+                        }
+                    } else if (goodType == GoodsType.COMBINE) {
+                        // 处理套餐
+                        Combine combine = combines.stream()
+                                .filter(sm -> sm.getId().equals(item.getId()))
+                                .findFirst()
+                                .orElseThrow(() -> new OrderCalculationException("套餐不存在: " + item.getGoodName()));
+                        if (combine != null) {
+                            order.addItem(combine, count);
+                        }
+                    }
                 }
+            }
+
+            // 匹配套餐,将订单中符合套餐的商品进行组合
+            if (orderCombineConfig.isAuto()) {
+                billingService.matchSetMeals(order, combines);
             }
 
             // 判断是否节假日
@@ -54,12 +95,12 @@ public class OrderService {
                 return new OrderResultVO(ifHoliday, Money.ZERO, Money.ZERO, rules, null);
             }
             // 不参与折扣的商品
-            List<MenuItem> excluded = Arrays.asList(MenuItem.MILK_TEA);
+            List<String> excludedIds = productProperties.getNonDiscountGoods();
             Money originalCost = calculateWithoutDiscount(order);
             Money cost = originalCost;
             DiscountResult discountResult = null;
             if (ifHoliday) {
-                discountResult = calculateWithDiscount(order, rules, excluded);
+                discountResult = calculateWithDiscount(order, rules, excludedIds);
                 cost = discountResult.getFinalPrice();
             }
             // TODO 测试异常
