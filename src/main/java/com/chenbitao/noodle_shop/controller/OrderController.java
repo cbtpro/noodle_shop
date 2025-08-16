@@ -8,8 +8,8 @@ import com.chenbitao.noodle_shop.domain.model.Holiday;
 import com.chenbitao.noodle_shop.domain.model.MenuItem;
 import com.chenbitao.noodle_shop.domain.model.Money;
 import com.chenbitao.noodle_shop.domain.model.Order;
-import com.chenbitao.noodle_shop.vo.OrderItemRequest;
-import com.chenbitao.noodle_shop.vo.OrderResult;
+import com.chenbitao.noodle_shop.vo.OrderItemRequestVO;
+import com.chenbitao.noodle_shop.vo.OrderResultVO;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -28,9 +28,9 @@ public class OrderController {
      * @return 订单价格
      */
     @PostMapping("/calculate")
-    public OrderResult calculateOrder(@RequestBody List<OrderItemRequest> items) {
+    public OrderResultVO calculateOrder(@RequestBody List<OrderItemRequestVO> items) {
         Order order = new Order();
-        for (OrderItemRequest item : items) {
+        for (OrderItemRequestVO item : items) {
             // 根据商品名获取 MenuItem，再添加对应数量
             order.addItem(MenuItem.valueOf(item.getGood()), item.getCount());
         }
@@ -50,6 +50,6 @@ public class OrderController {
         if (ifHoliday) {
             cost = orderService.calculateWithDiscount(order, rules, excluded);
         }
-        return new OrderResult(ifHoliday, originalCost, cost, rules);
+        return new OrderResultVO(ifHoliday, originalCost, cost, rules);
     }
 }
