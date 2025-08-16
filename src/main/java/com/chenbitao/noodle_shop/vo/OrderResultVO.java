@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.chenbitao.noodle_shop.domain.model.DiscountRule;
 import com.chenbitao.noodle_shop.domain.model.Money;
+import com.chenbitao.noodle_shop.domain.model.Order;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,6 +27,10 @@ public class OrderResultVO {
      */
     private Money cost;
     /**
+     * 订单列表
+     */
+    private List<OrderItemVO> items;
+    /**
      * 可用的折扣规则
      */
     private List<DiscountRule> rules;
@@ -33,4 +38,5 @@ public class OrderResultVO {
      * 生效的折扣规则
      */
     private List<DiscountRule> appliedRules;
+
 }

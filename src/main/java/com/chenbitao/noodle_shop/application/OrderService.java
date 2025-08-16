@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import com.chenbitao.noodle_shop.service.BillingService;
 import com.chenbitao.noodle_shop.service.impl.BillingServiceImpl;
 import com.chenbitao.noodle_shop.vo.DiscountResult;
 import com.chenbitao.noodle_shop.vo.OrderItemRequestVO;
+import com.chenbitao.noodle_shop.vo.OrderItemVO;
 import com.chenbitao.noodle_shop.vo.OrderResultVO;
 
 @Service
@@ -92,7 +94,7 @@ public class OrderService {
 
             if (order.getItemTotal() == 0) {
                 // 如果订单为空，直接返回结果
-                return new OrderResultVO(ifHoliday, Money.ZERO, Money.ZERO, rules, null);
+                return new OrderResultVO(ifHoliday, Money.ZERO, Money.ZERO, null, rules, null);
             }
             // 不参与折扣的商品
             List<String> excludedIds = productProperties.getNonDiscountGoods();
@@ -105,7 +107,14 @@ public class OrderService {
             }
             // TODO 测试异常
             // throw new OrderCalculationException("计算订单价格失败");
-            return new OrderResultVO(ifHoliday, originalCost, cost, rules, discountResult.getApplied());
+            List<OrderItemVO> itemVOs = order.getItems().entrySet().stream()
+                    .map(e -> new OrderItemVO(
+                            e.getKey().getId(),
+                            e.getKey().getName(),
+                            new Money(e.getKey().getPrice()),
+                            e.getValue()))
+                    .collect(Collectors.toList());
+            return new OrderResultVO(ifHoliday, originalCost, cost, itemVOs, rules, discountResult.getApplied());
         } catch (OrderCalculationException e) {
             throw new OrderCalculationException("计算订单价格失败", e);
         } catch (Exception e) {
