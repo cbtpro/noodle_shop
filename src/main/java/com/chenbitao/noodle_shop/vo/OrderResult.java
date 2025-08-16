@@ -7,12 +7,14 @@ import com.chenbitao.noodle_shop.domain.model.Money;
 
 public class OrderResult {
     private boolean holiday;
-    private Money amount;
+    private Money originalCost;
+    private Money cost;
     private List<DiscountRule> rules;
 
-    public OrderResult(boolean holiday, Money amount, List<DiscountRule> rules) {
+    public OrderResult(boolean holiday, Money originalCost, Money cost, List<DiscountRule> rules) {
         this.holiday = holiday;
-        this.amount = amount;
+        this.originalCost = originalCost;
+        this.cost = cost;
         this.rules = rules;
     }
 
@@ -20,11 +22,15 @@ public class OrderResult {
         return holiday;
     }
 
+    public Money getOriginalCost() {
+        return originalCost;
+    }
+
     public List<DiscountRule> getRules() {
         return rules;
     }
 
-    public Money getAmount() {
-        return amount;
+    public Money getCost() {
+        return cost;
     }
 }
