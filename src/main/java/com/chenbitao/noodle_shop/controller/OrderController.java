@@ -3,6 +3,7 @@ package com.chenbitao.noodle_shop.controller;
 import org.springframework.web.bind.annotation.*;
 
 import com.chenbitao.noodle_shop.application.OrderService;
+import com.chenbitao.noodle_shop.vo.ApiResponseBody;
 import com.chenbitao.noodle_shop.vo.OrderItemRequestVO;
 import com.chenbitao.noodle_shop.vo.OrderResultVO;
 
@@ -25,7 +26,7 @@ public class OrderController {
      * @return 订单价格
      */
     @PostMapping("/calculate")
-    public OrderResultVO calculateOrder(@RequestBody List<OrderItemRequestVO> items) {
-        return orderService.calc(items);
+    public ApiResponseBody<OrderResultVO> calculateOrder(@RequestBody List<OrderItemRequestVO> items) {
+        return ApiResponseBody.success(orderService.calc(items));
     }
 }
