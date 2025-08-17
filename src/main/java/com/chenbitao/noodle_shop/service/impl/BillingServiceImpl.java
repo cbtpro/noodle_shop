@@ -18,7 +18,7 @@ public class BillingServiceImpl implements BillingService {
     @Override
     public Money calculateTotal(Order order) {
         BigDecimal total = BigDecimal.ZERO;
-        for (OrderItem item : order.getItems().keySet()) {
+        for (IOrderItem item : order.getItems().keySet()) {
             // 获取商品数量
             int count = order.getItemCount(item);
             // 商品价格
@@ -41,7 +41,7 @@ public class BillingServiceImpl implements BillingService {
         }
         // 统计可参与折扣的金额，排除 excluded 中的商品
         BigDecimal discountBase = BigDecimal.ZERO;
-        for (OrderItem item : order.getItems().keySet()) {
+        for (IOrderItem item : order.getItems().keySet()) {
             if (excluded == null || !excluded.contains(item.getId())) {
                 BigDecimal price = BigDecimal.valueOf(item.getPrice());
                 int count = order.getItemCount(item);
@@ -106,13 +106,13 @@ public class BillingServiceImpl implements BillingService {
 
     /** 从订单中扣掉一个套餐对应的商品数量 */
     public void applyCombine(Order order, Combine combine) {
-        // 构造 itemId -> OrderItem 的映射，方便快速查找
-        Map<String, OrderItem> orderItemMap = order.getItems().keySet().stream()
-                .collect(Collectors.toMap(OrderItem::getId, item -> item));
+        // 构造 itemId -> IOrderItem 的映射，方便快速查找
+        Map<String, IOrderItem> orderItemMap = order.getItems().keySet().stream()
+                .collect(Collectors.toMap(IOrderItem::getId, item -> item));
 
         // 遍历套餐里的商品，逐个在订单中扣减
         for (String goodsId : combine.getItems()) {
-            OrderItem item = orderItemMap.get(goodsId);
+            IOrderItem item = orderItemMap.get(goodsId);
             if (item != null) {
                 order.removeItem(item, 1); // 每个套餐项默认扣掉数量1
             }
@@ -123,7 +123,7 @@ public class BillingServiceImpl implements BillingService {
      * 从订单中增加一个套餐对应的套餐数量
      */
     public void addCombine(Order order, Combine combine) {
-        for (OrderItem item : order.getItems().keySet()) {
+        for (IOrderItem item : order.getItems().keySet()) {
             if (item.getId().equals(combine.getId())) {
                 order.addItem(item, 1); // 每个套餐项默认增加数量1
                 break;

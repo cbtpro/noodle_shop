@@ -8,7 +8,7 @@ import lombok.Data;
  */
 @Data
 @Builder
-public class Goods implements OrderItem {
+public class Goods implements IOrderItem {
     private String id;
     private String name;
     private float price;

@@ -10,7 +10,7 @@ import lombok.Data;
  */
 @Data
 @Builder
-public class Combine implements OrderItem {
+public class Combine implements IOrderItem {
     private String id;
     private String name;
     private float price;
