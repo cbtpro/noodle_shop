@@ -200,3 +200,13 @@ curl --location --request POST 'http://localhost:8888/orders/calculate' \
 - 折扣规则验证  
 - 套餐匹配逻辑
 - 边界条件测试
+
+## 截图
+
+![curl](./screenshot/curl.png)
+![post](./screenshot/post.png)
+
+## TODO
+
+- 数据库支持
+- 404重定向
