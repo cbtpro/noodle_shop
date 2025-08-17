@@ -12,13 +12,14 @@ public class Holiday {
 
     static {
         // 示例：固定日期节假日
-        FIXED_HOLIDAYS.add(LocalDate.of(2025, 1, 1));   // 元旦
-        FIXED_HOLIDAYS.add(LocalDate.of(2025, 10, 1));  // 国庆
+        FIXED_HOLIDAYS.add(LocalDate.of(2025, 1, 1)); // 元旦
+        FIXED_HOLIDAYS.add(LocalDate.of(2025, 10, 1)); // 国庆
         // TODO 继续添加其他节日
     }
 
     /**
      * 判断是否是节假日
+     * 
      * @param date 日期
      * @return true 是节假日，false 否
      */

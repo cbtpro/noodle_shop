@@ -7,7 +7,6 @@ import com.chenbitao.noodle_shop.domain.model.Combine;
 import com.chenbitao.noodle_shop.domain.model.DiscountRule;
 import com.chenbitao.noodle_shop.domain.model.Money;
 import com.chenbitao.noodle_shop.domain.model.Order;
-import com.chenbitao.noodle_shop.domain.model.SetMeal;
 import com.chenbitao.noodle_shop.vo.DiscountResult;
 
 public interface BillingService {

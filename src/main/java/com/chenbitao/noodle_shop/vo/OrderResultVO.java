@@ -4,8 +4,6 @@ import java.util.List;
 
 import com.chenbitao.noodle_shop.domain.model.DiscountRule;
 import com.chenbitao.noodle_shop.domain.model.Money;
-import com.chenbitao.noodle_shop.domain.model.Order;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
