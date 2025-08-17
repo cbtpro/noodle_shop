@@ -33,3 +33,5 @@ build/
 .vscode/
 
 .history/
+
+.DS_Store
