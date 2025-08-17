@@ -13,7 +13,7 @@ import com.chenbitao.noodle_shop.config.ProductProperties;
 import com.chenbitao.noodle_shop.domain.model.*;
 import com.chenbitao.noodle_shop.enums.GoodsType;
 import com.chenbitao.noodle_shop.exception.OrderCalculationException;
-import com.chenbitao.noodle_shop.service.BillingService;
+import com.chenbitao.noodle_shop.service.IBillingService;
 import com.chenbitao.noodle_shop.service.impl.BillingServiceImpl;
 import com.chenbitao.noodle_shop.vo.DiscountResult;
 import com.chenbitao.noodle_shop.vo.OrderItemRequestVO;
@@ -22,7 +22,7 @@ import com.chenbitao.noodle_shop.vo.OrderResultVO;
 
 @Service
 public class OrderService {
-    private final BillingService billingService;
+    private final IBillingService billingService;
 
     /**
      * 订单合并配置

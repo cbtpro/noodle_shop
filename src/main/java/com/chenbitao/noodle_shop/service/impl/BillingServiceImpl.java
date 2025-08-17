@@ -9,11 +9,11 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.chenbitao.noodle_shop.domain.model.*;
-import com.chenbitao.noodle_shop.service.BillingService;
+import com.chenbitao.noodle_shop.service.IBillingService;
 import com.chenbitao.noodle_shop.vo.DiscountResult;
 
 @Service
-public class BillingServiceImpl implements BillingService {
+public class BillingServiceImpl implements IBillingService {
 
     @Override
     public Money calculateTotal(Order order) {
@@ -106,7 +106,7 @@ public class BillingServiceImpl implements BillingService {
 
     /** 从订单中扣掉一个套餐对应的商品数量 */
     public void applyCombine(Order order, Combine combine) {
-        // 构造 itemId -> IOrderItem 的映射，方便快速查找
+        // 构造 itemId -> I OrderItem 的映射，方便快速查找
         Map<String, IOrderItem> orderItemMap = order.getItems().keySet().stream()
                 .collect(Collectors.toMap(IOrderItem::getId, item -> item));
 

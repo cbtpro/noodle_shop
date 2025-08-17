@@ -9,7 +9,7 @@ import com.chenbitao.noodle_shop.domain.model.Money;
 import com.chenbitao.noodle_shop.domain.model.Order;
 import com.chenbitao.noodle_shop.vo.DiscountResult;
 
-public interface BillingService {
+public interface IBillingService {
 
     /**
      * 计算订单的总价
