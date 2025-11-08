@@ -104,7 +104,7 @@ public class OrderService {
                 discountResult = calculateWithDiscount(order, rules, excludedIds);
                 cost = discountResult.getFinalPrice();
             }
-            // TODO 测试异常
+            // 测试异常情况
             // throw new OrderCalculationException("计算订单价格失败");
             List<OrderItemVO> itemVOs = order.getItems().entrySet().stream()
                     .map(e -> new OrderItemVO(

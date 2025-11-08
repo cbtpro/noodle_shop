@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponseBody<Object>> handleException(Exception ex) {
         String trace = null;
-        // 如果是dev,就可以返回堆栈信息,同时所有换记录日志文件
+        // 如果是dev,就可以返回堆栈信息，方便定位，其余情况都
         if ("dev".equalsIgnoreCase(activeProfile)) {
             trace = Arrays.toString(ex.getStackTrace());
         }
