@@ -13,6 +13,11 @@ public class OrderItemRequestVO {
      * 商品ID
      */
     private Long id;
+
+    /**
+     * 商品code
+     */
+    private String code;
     /**
      * 商品名称
      */

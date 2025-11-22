@@ -128,7 +128,7 @@ public class BillingServiceImpl implements IBillingService {
      */
     public void addCombine(Order order, Combine combine) {
         for (IOrderItem item : order.getItems().keySet()) {
-            if (item.getId().equals(combine.getId())) {
+            if (item.getCode().equals(combine.getCode())) {
                 order.addItem(item, 1); // 每个套餐项默认增加数量1
                 break;
             }
