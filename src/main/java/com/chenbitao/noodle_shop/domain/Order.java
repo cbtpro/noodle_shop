@@ -1,4 +1,4 @@
-package com.chenbitao.noodle_shop.domain.model;
+package com.chenbitao.noodle_shop.domain;
 
 import java.util.HashMap;
 import java.util.Map;

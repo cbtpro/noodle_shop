@@ -8,7 +8,11 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.chenbitao.noodle_shop.domain.model.*;
+import com.chenbitao.noodle_shop.domain.Combine;
+import com.chenbitao.noodle_shop.domain.DiscountRule;
+import com.chenbitao.noodle_shop.domain.IOrderItem;
+import com.chenbitao.noodle_shop.domain.Money;
+import com.chenbitao.noodle_shop.domain.Order;
 import com.chenbitao.noodle_shop.service.IBillingService;
 import com.chenbitao.noodle_shop.vo.DiscountResult;
 
@@ -22,7 +26,7 @@ public class BillingServiceImpl implements IBillingService {
             // 获取商品数量
             int count = order.getItemCount(item);
             // 商品价格
-            BigDecimal price = BigDecimal.valueOf(item.getPrice());
+            BigDecimal price = item.getPrice();
             // 累加每个商品的总价
             total = total.add(price.multiply(BigDecimal.valueOf(count)));
         }
@@ -31,7 +35,7 @@ public class BillingServiceImpl implements IBillingService {
     }
 
     @Override
-    public DiscountResult calculateWithDiscount(Order order, List<DiscountRule> rules, List<String> excluded) {
+    public DiscountResult calculateWithDiscount(Order order, List<DiscountRule> rules, List<String> excludedCodes) {
         // 计算订单原价，包括所有商品
         BigDecimal total = calculateTotal(order).getAmount();
 
@@ -42,8 +46,8 @@ public class BillingServiceImpl implements IBillingService {
         // 统计可参与折扣的金额，排除 excluded 中的商品
         BigDecimal discountBase = BigDecimal.ZERO;
         for (IOrderItem item : order.getItems().keySet()) {
-            if (excluded == null || !excluded.contains(item.getId())) {
-                BigDecimal price = BigDecimal.valueOf(item.getPrice());
+            if (excludedCodes == null || !excludedCodes.contains(item.getCode())) {
+                BigDecimal price = item.getPrice();
                 int count = order.getItemCount(item);
                 discountBase = discountBase.add(price.multiply(BigDecimal.valueOf(count)));
             }
@@ -92,7 +96,7 @@ public class BillingServiceImpl implements IBillingService {
     public boolean canApplyCombine(Order order, Combine combine) {
         // 先把订单里的 itemId -> count 映射出来，方便快速查找
         Map<String, Integer> orderCountMap = order.getItems().entrySet().stream()
-                .collect(Collectors.toMap(e -> e.getKey().getId(), Map.Entry::getValue));
+                .collect(Collectors.toMap(e -> e.getKey().getCode(), Map.Entry::getValue));
 
         // 检查套餐里的每个商品是否都存在，且数量 >= 1
         for (String goodsId : combine.getItems()) {
@@ -108,7 +112,7 @@ public class BillingServiceImpl implements IBillingService {
     public void applyCombine(Order order, Combine combine) {
         // 构造 itemId -> I OrderItem 的映射，方便快速查找
         Map<String, IOrderItem> orderItemMap = order.getItems().keySet().stream()
-                .collect(Collectors.toMap(IOrderItem::getId, item -> item));
+                .collect(Collectors.toMap(IOrderItem::getCode, item -> item));
 
         // 遍历套餐里的商品，逐个在订单中扣减
         for (String goodsId : combine.getItems()) {

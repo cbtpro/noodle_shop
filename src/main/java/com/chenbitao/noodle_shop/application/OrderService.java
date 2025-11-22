@@ -10,7 +10,12 @@ import org.springframework.stereotype.Service;
 
 import com.chenbitao.noodle_shop.config.OrderCombineConfig;
 import com.chenbitao.noodle_shop.config.ProductProperties;
-import com.chenbitao.noodle_shop.domain.model.*;
+import com.chenbitao.noodle_shop.domain.Combine;
+import com.chenbitao.noodle_shop.domain.DiscountRule;
+import com.chenbitao.noodle_shop.domain.Goods;
+import com.chenbitao.noodle_shop.domain.Holiday;
+import com.chenbitao.noodle_shop.domain.Money;
+import com.chenbitao.noodle_shop.domain.Order;
 import com.chenbitao.noodle_shop.enums.GoodsType;
 import com.chenbitao.noodle_shop.exception.OrderCalculationException;
 import com.chenbitao.noodle_shop.service.IBillingService;
@@ -37,8 +42,8 @@ public class OrderService {
         this.billingService = billingService;
     }
 
-    public DiscountResult calculateWithDiscount(Order order, List<DiscountRule> rules, List<String> excluded) {
-        return billingService.calculateWithDiscount(order, rules, excluded);
+    public DiscountResult calculateWithDiscount(Order order, List<DiscountRule> rules, List<String> excludedCode) {
+        return billingService.calculateWithDiscount(order, rules, excludedCode);
     }
 
     public Money calculateWithoutDiscount(Order order) {
@@ -96,7 +101,7 @@ public class OrderService {
                 return new OrderResultVO(ifHoliday, Money.ZERO, Money.ZERO, null, rules, null);
             }
             // 不参与折扣的商品
-            List<String> excludedIds = productProperties.getNonDiscountGoods();
+            List<String> excludedIds = productProperties.getNonDiscountGoodsCodes();
             Money originalCost = calculateWithoutDiscount(order);
             Money cost = originalCost;
             DiscountResult discountResult = null;

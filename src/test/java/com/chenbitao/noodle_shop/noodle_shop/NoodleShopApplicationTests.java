@@ -1,10 +1,10 @@
 package com.chenbitao.noodle_shop.noodle_shop;
 
 import com.chenbitao.noodle_shop.application.OrderService;
-import com.chenbitao.noodle_shop.domain.model.DiscountRule;
-import com.chenbitao.noodle_shop.domain.model.Goods;
-import com.chenbitao.noodle_shop.domain.model.Money;
-import com.chenbitao.noodle_shop.domain.model.Order;
+import com.chenbitao.noodle_shop.domain.DiscountRule;
+import com.chenbitao.noodle_shop.domain.Goods;
+import com.chenbitao.noodle_shop.domain.Money;
+import com.chenbitao.noodle_shop.domain.Order;
 import com.chenbitao.noodle_shop.vo.DiscountResult;
 
 import org.junit.jupiter.api.Test;
@@ -30,16 +30,16 @@ class NoodleShopApplicationTests {
 	public void testCalculateOrder() {
 		Order order = new Order();
 		Goods goods1 = Goods.builder()
-				.id("combine_1")
+				.code("combine_1")
 				.name("套餐1")
-				.price(38.00f)
+				.price(BigDecimal.valueOf(38.00f))
 				.build();
 		order.addItem(goods1);
 
 		Goods goods2 = Goods.builder()
-				.id("beef_cake")
+				.code("beef_cake")
 				.name("牛肉饼")
-				.price(10.00f)
+				.price(BigDecimal.valueOf(10.00f))
 				.build();
 		order.addItem(goods2);
 
@@ -54,15 +54,15 @@ class NoodleShopApplicationTests {
 	public void testCalculateOrder1() {
 		Order order = new Order();
 		Goods goods1 = Goods.builder()
-				.id("intestine_noodle_medium")
+				.code("intestine_noodle_medium")
 				.name("中碗肥肠面")
-				.price(18.00f)
+				.price(BigDecimal.valueOf(18.00f))
 				.build();
 		order.addItem(goods1);
 		Goods goods2 = Goods.builder()
-				.id("milk_tea")
+				.code("milk_tea")
 				.name("奶茶")
-				.price(12.00f)
+				.price(BigDecimal.valueOf(12.00f))
 				.build();
 		order.addItem(goods2, 2);
 
@@ -78,15 +78,15 @@ class NoodleShopApplicationTests {
 	public void testCalculateOrder2() {
 		Order order = new Order();
 		Goods goods1 = Goods.builder()
-				.id("beef_noodle_small")
+				.code("beef_noodle_small")
 				.name("中碗肥肠面")
-				.price(18.00f)
+				.price(BigDecimal.valueOf(18.00f))
 				.build();
 		order.addItem(goods1, 3);
 		Goods goods2 = Goods.builder()
-				.id("milk_tea")
+				.code("milk_tea")
 				.name("奶茶")
-				.price(12.00f)
+				.price(BigDecimal.valueOf(12.00f))
 				.build();
 		order.addItem(goods2, 2);
 
@@ -102,15 +102,15 @@ class NoodleShopApplicationTests {
 	public void testNoDiscountApplied() {
 		Order order = new Order();
 		Goods goods1 = Goods.builder()
-				.id("beef_noodle_small")
+				.code("beef_noodle_small")
 				.name("小碗牛肉面")
-				.price(14.00f)
+				.price(BigDecimal.valueOf(14.00f))
 				.build();
 		order.addItem(goods1); // 14元
 		Goods goods2 = Goods.builder()
-				.id("milk_tea")
+				.code("milk_tea")
 				.name("奶茶")
-				.price(12.00f)
+				.price(BigDecimal.valueOf(12.00f))
 				.build();
 		order.addItem(goods2); // 12元
 
@@ -126,23 +126,23 @@ class NoodleShopApplicationTests {
 	public void testDiscountExactlyAtThreshold() {
 		Order order = new Order();
 		Goods goods1 = Goods.builder()
-				.id("beef_noodle_large")
+				.code("beef_noodle_large")
 				.name("大碗牛肉面")
-				.price(18.00f)
+				.price(BigDecimal.valueOf(18.00f))
 				.build();
 		order.addItem(goods1); // 18元
 
 		Goods goods2 = Goods.builder()
-				.id("intestine_noodle_small")
+				.code("intestine_noodle_small")
 				.name("小碗肥肠面")
-				.price(16.00f)
+				.price(BigDecimal.valueOf(16.00f))
 				.build();
 		order.addItem(goods2); // 16元
 
 		Goods goods3 = Goods.builder()
-				.id("beef_cake")
+				.code("beef_cake")
 				.name("牛肉饼")
-				.price(10.00f)
+				.price(BigDecimal.valueOf(10.00f))
 				.build();
 		order.addItem(goods3); // 10元
 
@@ -158,16 +158,16 @@ class NoodleShopApplicationTests {
 	public void testMultipleItemsExcluded() {
 		Order order = new Order();
 		Goods goods1 = Goods.builder()
-				.id("intestine_noodle_medium")
+				.code("intestine_noodle_medium")
 				.name("中碗肥肠面")
-				.price(18.00f)
+				.price(BigDecimal.valueOf(18.00f))
 				.build();
 		order.addItem(goods1, 2); // 36元
 
 		Goods goods2 = Goods.builder()
-				.id("milk_tea")
+				.code("milk_tea")
 				.name("奶茶")
-				.price(12.00f)
+				.price(BigDecimal.valueOf(12.00f))
 				.build();
 		order.addItem(goods2, 2); // 24元
 
@@ -183,16 +183,16 @@ class NoodleShopApplicationTests {
 	public void testLargeQuantityDiscount() {
 		Order order = new Order();
 		Goods goods1 = Goods.builder()
-				.id("beef_noodle_large")
+				.code("beef_noodle_large")
 				.name("大碗牛肉面")
-				.price(18.00f)
+				.price(BigDecimal.valueOf(18.00f))
 				.build();
 		order.addItem(goods1, 5); // 90元
 
 		Goods goods2 = Goods.builder()
-				.id("milk_tea")
+				.code("milk_tea")
 				.name("奶茶")
-				.price(12.00f)
+				.price(BigDecimal.valueOf(12.00f))
 				.build();
 		order.addItem(goods2, 2); // 24元
 
@@ -208,15 +208,15 @@ class NoodleShopApplicationTests {
 	public void testAllExcludedItems() {
 		Order order = new Order();
 		Goods good1 = Goods.builder()
-				.id("beef_cake")
+				.code("beef_cake")
 				.name("牛肉饼")
-				.price(10.00f)
+				.price(BigDecimal.valueOf(10.00f))
 				.build();
 		order.addItem(good1, 3); // 30元
 		Goods goods2 = Goods.builder()
-				.id("milk_tea")
+				.code("milk_tea")
 				.name("奶茶")
-				.price(12.00f)
+				.price(BigDecimal.valueOf(12.00f))
 				.build();
 		order.addItem(goods2, 2); // 24元
 

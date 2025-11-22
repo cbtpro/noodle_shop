@@ -1,4 +1,4 @@
-package com.chenbitao.noodle_shop.domain.model;
+package com.chenbitao.noodle_shop.domain;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;

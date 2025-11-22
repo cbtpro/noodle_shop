@@ -2,8 +2,9 @@ package com.chenbitao.noodle_shop.vo;
 
 import java.util.List;
 
-import com.chenbitao.noodle_shop.domain.model.DiscountRule;
-import com.chenbitao.noodle_shop.domain.model.Money;
+import com.chenbitao.noodle_shop.domain.DiscountRule;
+import com.chenbitao.noodle_shop.domain.Money;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -3,7 +3,7 @@ package com.chenbitao.noodle_shop.noodle_shop;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.chenbitao.noodle_shop.domain.model.Holiday;
+import com.chenbitao.noodle_shop.domain.Holiday;
 
 import java.time.LocalDate;
 

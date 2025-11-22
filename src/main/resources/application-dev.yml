@@ -1,17 +1,11 @@
 server:
-  port: 8888
-
+  port: 8091
 spring:
+  devtools:
+    restart:
+      enabled: true
   application:
-    name: noodle_shop
-  profiles:
-    active: dev
-
-app:
-  config:
-    order:
-      combine:
-        auto: true # 是否自动将商品组合成套餐
+    name: x
   datasource:
     dynamic:
       primary: primary   # 默认数据源
@@ -53,54 +47,5 @@ mybatis-plus:
 
 logging:
   level:
-    root: WARN
-    org.springframework: WARN
-    com.chenbitao.noodleshop: info
     com.baomidou.dynamic.datasource: debug
     com.zaxxer.hikari: debug
-
-product:
-  goods:
-    - code: beef_noodle_large
-      name: 大碗牛肉面
-      price: 18
-    - code: beef_noodle_medium
-      name: 中碗牛肉面
-      price: 16
-    - code: beef_noodle_small
-      name: 小碗牛肉面
-      price: 14
-    - code: intestine_noodle_large
-      name: 大碗肥肠面
-      price: 20
-    - code: intestine_noodle_medium
-      name: 中碗肥肠面
-      price: 18
-    - code: intestine_noodle_small
-      name: 小碗肥肠面
-      price: 16
-    - code: beef_cake
-      name: 牛肉饼
-      price: 10
-    - code: milk_tea
-      name: 奶茶
-      price: 12
-
-  combine:
-    - code: combine_1
-      name: 套餐1
-      price: 38
-      items:
-        - beef_noodle_large
-        - beef_cake
-        - milk_tea
-    - code: combine_2
-      name: 套餐2
-      price: 40
-      items:
-        - intestine_noodle_large
-        - beef_cake
-        - milk_tea
-  
-  non_discount_goods_codes:
-    - milk_tea

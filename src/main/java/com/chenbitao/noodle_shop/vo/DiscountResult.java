@@ -1,11 +1,12 @@
 package com.chenbitao.noodle_shop.vo;
 
-import com.chenbitao.noodle_shop.domain.model.DiscountRule;
-import com.chenbitao.noodle_shop.domain.model.Money;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.List;
+
+import com.chenbitao.noodle_shop.domain.DiscountRule;
+import com.chenbitao.noodle_shop.domain.Money;
 
 @Data
 @AllArgsConstructor

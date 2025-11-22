@@ -5,8 +5,8 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import com.chenbitao.noodle_shop.domain.model.Combine;
-import com.chenbitao.noodle_shop.domain.model.Goods;
+import com.chenbitao.noodle_shop.domain.Combine;
+import com.chenbitao.noodle_shop.domain.Goods;
 
 import jakarta.annotation.PostConstruct;
 
@@ -32,13 +32,13 @@ public class ProductProperties {
     private List<Combine> combine;
 
     /**
-     * 不打折商品id列表
+     * 不打折商品Code列表
      */
-    private List<String> nonDiscountGoods;
+    private List<String> nonDiscountGoodsCodes;
 
     @PostConstruct
     public void init() {
-        Map<String, Goods> goodsMap = goods.stream().collect(Collectors.toMap(Goods::getId, g -> g));
+        Map<String, Goods> goodsMap = goods.stream().collect(Collectors.toMap(Goods::getCode, g -> g));
         for (Combine combine : combine) {
             List<Goods> mappedGoods = combine.getItems().stream()
                     .map(goodsMap::get)

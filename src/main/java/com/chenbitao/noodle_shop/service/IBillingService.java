@@ -3,10 +3,10 @@ package com.chenbitao.noodle_shop.service;
 import java.util.List;
 import java.util.Map;
 
-import com.chenbitao.noodle_shop.domain.model.Combine;
-import com.chenbitao.noodle_shop.domain.model.DiscountRule;
-import com.chenbitao.noodle_shop.domain.model.Money;
-import com.chenbitao.noodle_shop.domain.model.Order;
+import com.chenbitao.noodle_shop.domain.Combine;
+import com.chenbitao.noodle_shop.domain.DiscountRule;
+import com.chenbitao.noodle_shop.domain.Money;
+import com.chenbitao.noodle_shop.domain.Order;
 import com.chenbitao.noodle_shop.vo.DiscountResult;
 
 public interface IBillingService {
@@ -23,7 +23,7 @@ public interface IBillingService {
      * @param order 订单
      * @return  打折后订单总价
      */
-    public DiscountResult calculateWithDiscount(Order order, List<DiscountRule> rules, List<String> excluded);
+    public DiscountResult calculateWithDiscount(Order order, List<DiscountRule> rules, List<String> excludedCode);
 
     /**
      * 计算订单的原价，不应用任何折扣
