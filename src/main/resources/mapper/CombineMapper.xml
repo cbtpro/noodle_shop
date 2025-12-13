@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chenbitao.noodle_shop.mapper.CombineMapper">
+
+    <!-- 1. ResultMap，包含套餐明细 -->
+    <resultMap id="CombineWithItemsMap" type="com.chenbitao.noodle_shop.domain.Combine">
+        <id column="combine_id" property="id" />
+        <result column="combine_code" property="code" />
+        <result column="combine_name" property="name" />
+        <result column="combine_price" property="price" />
+        <result column="revision" property="revision" />
+        <result column="created_by" property="createdBy" />
+        <result column="created_time" property="createdTime" />
+        <result column="updated_by" property="updatedBy" />
+        <result column="updated_time" property="updatedTime" />
+        <result column="deleted" property="deleted" />
+
+        <!-- 套餐明细列表 -->
+        <collection property="itemList" ofType="com.chenbitao.noodle_shop.domain.CombineItem"
+            javaType="java.util.List" autoMapping="false">
+            <id column="item_id" property="id" />
+            <result column="goods_code" property="goodsCode" />
+            <result column="combine_id" property="combineId" />
+        </collection>
+
+        <!-- 套餐对应的商品实体列表 -->
+        <collection property="goodsList" ofType="com.chenbitao.noodle_shop.domain.Goods"
+            javaType="java.util.List" autoMapping="false">
+            <id column="goods_id" property="id" />
+            <result column="goods_code" property="code" />
+            <result column="goods_name" property="name" />
+            <result column="goods_price" property="price" />
+        </collection>
+    </resultMap>
+
+    <!-- 查询所有套餐 + 明细 + 商品 -->
+    <select id="selectAllWithItemsAndGoods" resultMap="CombineWithItemsMap"> SELECT c.id AS
+        combine_id, c.code AS combine_code, c.name AS combine_name, c.price AS combine_price,
+        c.revision, c.created_by, c.created_time, c.updated_by, c.updated_time, c.deleted,
+        c.deleted_by, c.deleted_time, ci.id AS item_id, ci.combine_id AS combine_id, ci.goods_code
+        AS goods_code, g.id AS goods_id, g.code AS goods_code, g.name AS goods_name, g.price AS
+        goods_price FROM t_base_combine c LEFT JOIN t_base_combine_item ci ON c.id = ci.combine_id
+        LEFT JOIN t_base_goods g ON ci.goods_code = g.code WHERE c.deleted = 0 ORDER BY c.id, ci.id </select>
+
+    <!-- 根据ID查询套餐 + 明细 + 商品 -->
+    <select id="selectByIdWithItemsAndGoods" parameterType="long" resultMap="CombineWithItemsMap">
+        SELECT c.id AS combine_id, c.code AS combine_code, c.name AS combine_name, c.price AS
+        combine_price, ci.id AS item_id, ci.combine_id AS item_combine_id, ci.goods_code AS
+        item_goods_code, g.id AS goods_id, g.code AS goods_code, g.name AS goods_name, g.price AS
+        goods_price FROM t_base_combine c LEFT JOIN t_base_combine_item ci ON c.id = ci.combine_id
+        LEFT JOIN t_base_goods g ON ci.goods_code = g.code WHERE c.id = #{id} AND c.deleted = 0
+        ORDER BY ci.id </select>
+
+</mapper>

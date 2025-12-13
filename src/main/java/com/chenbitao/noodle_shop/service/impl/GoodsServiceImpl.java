@@ -2,6 +2,7 @@ package com.chenbitao.noodle_shop.service.impl;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,60 +47,125 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     }
 
     @Override
+    @DS("cluster1")
     public GoodsVO getGoodsById(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getGoodsById'");
+        // if (id == null) {
+        // throw new BusinessException("商品ID不能为空");
+        // }
+
+        // Goods goods = this.baseMapper.selectById(id);
+        // if (goods == null) {
+        // throw new BusinessException("商品不存在");
+        // }
+        // return GoodsVO.builder()
+        // .id(goods.getId())
+        // .name(goods.getName())
+        // .price(goods.getPrice())
+        // .createdBy(goods.getCreatedBy())
+        // .createdTime(goods.getCreatedTime())
+        // .updatedBy(goods.getUpdatedBy())
+        // .updatedTime(goods.getUpdatedTime())
+        // .build();
+        return Optional.ofNullable(id)
+                .map(this.baseMapper::selectById)
+                .map(goods -> GoodsVO.builder()
+                        .id(goods.getId())
+                        .name(goods.getName())
+                        .price(goods.getPrice())
+                        .createdBy(goods.getCreatedBy())
+                        .createdTime(goods.getCreatedTime())
+                        .updatedBy(goods.getUpdatedBy())
+                        .updatedTime(goods.getUpdatedTime())
+                        .build())
+                .orElseThrow(() -> new RuntimeException("商品不存在或ID为空"));
     }
 
     @Override
     public String addGoods(Goods goods) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addGoods'");
+        return Optional.ofNullable(goods)
+                .filter(g -> this.baseMapper.insert(g) > 0)
+                .map(g -> "新增商品成功")
+                .orElseThrow(() -> new RuntimeException("新增商品失败，商品不能为空"));
     }
 
     @Override
-    public String addGoods(List<Goods> goods) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addGoods'");
+    public String addGoods(List<Goods> goodsList) {
+        if (goodsList == null || goodsList.isEmpty()) {
+            throw new RuntimeException("商品列表不能为空");
+        }
+
+        boolean success = goodsList.stream()
+                .allMatch(goods -> this.baseMapper.insert(goods) > 0);
+
+        if (!success) {
+            throw new RuntimeException("批量新增商品失败");
+        }
+        return "批量新增商品成功";
     }
 
     @Override
     public String saveOrUpdateGoods(Goods goods) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveOrUpdateGoods'");
-    }
-
-    @Override
-    public Page<GoodsVO> queryGoodsPage(Page<Goods> page) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'queryGoodsPage'");
-    }
-
-    @Override
-    public String deleteGoodsById(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteGoodsById'");
-    }
-
-    @Override
-    public String batchDeleteGoodsByIds(List<Long> ids) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'batchDeleteGoodsByIds'");
-    }
-
-    @Override
-    public List<Goods> getAdultGoods() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAdultGoods'");
+        return Optional.ofNullable(goods)
+                .map(g -> {
+                    if (g.getId() == null) {
+                        return this.baseMapper.insert(g);
+                    }
+                    return this.baseMapper.updateById(g);
+                })
+                .filter(result -> result > 0)
+                .map(r -> "保存或更新商品成功")
+                .orElseThrow(() -> new RuntimeException("保存或更新商品失败"));
     }
 
     @Override
     @DS("cluster1")
-    public List<Goods> getComplexGoods() {
-        return this.lambdaQuery()
-                .between(Goods::getPrice, 18, 60)
-                .orderByDesc(Goods::getPrice)
-                .list();
+    public Page<GoodsVO> queryGoodsPage(Page<Goods> page) {
+        if (page == null) {
+            throw new RuntimeException("分页参数不能为空");
+        }
+
+        Page<Goods> goodsPage = this.baseMapper.selectPage(page, null);
+
+        Page<GoodsVO> voPage = new Page<>();
+        voPage.setCurrent(goodsPage.getCurrent());
+        voPage.setSize(goodsPage.getSize());
+        voPage.setTotal(goodsPage.getTotal());
+
+        List<GoodsVO> records = goodsPage.getRecords().stream()
+                .map(goods -> GoodsVO.builder()
+                        .id(goods.getId())
+                        .name(goods.getName())
+                        .price(goods.getPrice())
+                        .createdBy(goods.getCreatedBy())
+                        .createdTime(goods.getCreatedTime())
+                        .updatedBy(goods.getUpdatedBy())
+                        .updatedTime(goods.getUpdatedTime())
+                        .build())
+                .toList();
+
+        voPage.setRecords(records);
+        return voPage;
+    }
+
+    @Override
+    public String deleteGoodsById(Long id) {
+        return Optional.ofNullable(id)
+                .filter(gid -> this.baseMapper.deleteById(gid) > 0)
+                .map(gid -> "删除商品成功")
+                .orElseThrow(() -> new RuntimeException("删除商品失败，ID为空或商品不存在"));
+    }
+
+    @Override
+    public String batchDeleteGoodsByIds(List<Long> ids) {
+        if (ids == null || ids.isEmpty()) {
+            throw new RuntimeException("商品ID列表不能为空");
+        }
+
+        boolean success = this.removeByIds(ids);
+        if (!success) {
+            throw new RuntimeException("批量删除商品失败");
+        }
+        return "批量删除商品成功";
     }
 
     @Override

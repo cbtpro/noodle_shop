@@ -35,10 +35,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-  sql:
-    init:
-      schema-locations: classpath:db/schema.sql
-      data-locations: classpath:db/data.sql
+  # sql:
+  #   init:
+  #     schema-locations: classpath:db/schema.sql
+  #     data-locations: classpath:db/data.sql
 
 # MyBatis-Plus 配置
 mybatis-plus:

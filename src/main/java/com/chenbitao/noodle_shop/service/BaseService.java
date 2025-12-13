@@ -5,12 +5,16 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.chenbitao.noodle_shop.domain.BaseEntity;
+import com.chenbitao.noodle_shop.domain.base.BaseEntity;
 
 @Service
 public class BaseService<T extends BaseEntity<?>> {
 
     private BaseMapper<T> baseMapper;
+
+    // 无参构造器
+    public BaseService() {
+    }
 
     public BaseService(BaseMapper<T> baseMapper) {
         this.baseMapper = baseMapper;

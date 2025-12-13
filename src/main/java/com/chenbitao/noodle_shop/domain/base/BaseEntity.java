@@ -1,4 +1,4 @@
-package com.chenbitao.noodle_shop.domain;
+package com.chenbitao.noodle_shop.domain.base;
 
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;

@@ -18,24 +18,24 @@ app:
       strict: false      # 如果没有匹配数据源则走默认
       datasource:
         primary:
-          url: jdbc:mysql://localhost:3306/noodle_shop?useSSL=false&useUnicode=true&characterSetServer=utf8mb4&serverTimezone=Asia/Shanghai
+          url: jdbc:mysql://localhost:3306/noodle_shop?useSSL=false&useUnicode=true&characterSetServer=utf8mb4&characterEncoding=utf8mb4&serverTimezone=Asia/Shanghai
           username: noodle_shop
           password: noodle_shop
           driver-class-name: com.mysql.cj.jdbc.Driver
         cluster1:
-          url: jdbc:mysql://localhost:3306/noodle_shop?useSSL=false&useUnicode=true&characterSetServer=utf8mb4&serverTimezone=Asia/Shanghai
+          url: jdbc:mysql://localhost:3306/noodle_shop?useSSL=false&useUnicode=true&characterSetServer=utf8mb4&characterEncoding=utf8mb4&serverTimezone=Asia/Shanghai
           username: noodle_shop
           password: noodle_shop
           driver-class-name: com.mysql.cj.jdbc.Driver
         cluster2:
-          url: jdbc:mysql://localhost:3306/noodle_shop?useSSL=false&useUnicode=true&characterSetServer=utf8mb4&serverTimezone=Asia/Shanghai
+          url: jdbc:mysql://localhost:3306/noodle_shop?useSSL=false&useUnicode=true&characterSetServer=utf8mb4&characterEncoding=utf8mb4&serverTimezone=Asia/Shanghai
           username: noodle_shop
           password: noodle_shop
           driver-class-name: com.mysql.cj.jdbc.Driver
-  sql:
-    init:
-      schema-locations: classpath:db/schema.sql
-      data-locations: classpath:db/data.sql
+  # sql:
+  #   init:
+  #     schema-locations: classpath:db/schema.sql
+  #     data-locations: classpath:db/data.sql
 
 # MyBatis-Plus 配置
 mybatis-plus:
@@ -60,47 +60,5 @@ logging:
     com.zaxxer.hikari: debug
 
 product:
-  goods:
-    - code: beef_noodle_large
-      name: 大碗牛肉面
-      price: 18
-    - code: beef_noodle_medium
-      name: 中碗牛肉面
-      price: 16
-    - code: beef_noodle_small
-      name: 小碗牛肉面
-      price: 14
-    - code: intestine_noodle_large
-      name: 大碗肥肠面
-      price: 20
-    - code: intestine_noodle_medium
-      name: 中碗肥肠面
-      price: 18
-    - code: intestine_noodle_small
-      name: 小碗肥肠面
-      price: 16
-    - code: beef_cake
-      name: 牛肉饼
-      price: 10
-    - code: milk_tea
-      name: 奶茶
-      price: 12
-
-  combine:
-    - code: combine_1
-      name: 套餐1
-      price: 38
-      items:
-        - beef_noodle_large
-        - beef_cake
-        - milk_tea
-    - code: combine_2
-      name: 套餐2
-      price: 40
-      items:
-        - intestine_noodle_large
-        - beef_cake
-        - milk_tea
-  
   non_discount_goods_codes:
     - milk_tea

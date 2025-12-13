@@ -18,6 +18,8 @@ import com.chenbitao.noodle_shop.domain.Money;
 import com.chenbitao.noodle_shop.domain.Order;
 import com.chenbitao.noodle_shop.enums.GoodsType;
 import com.chenbitao.noodle_shop.exception.OrderCalculationException;
+import com.chenbitao.noodle_shop.mapper.CombineMapper;
+import com.chenbitao.noodle_shop.mapper.GoodsMapper;
 import com.chenbitao.noodle_shop.service.IBillingService;
 import com.chenbitao.noodle_shop.service.impl.BillingServiceImpl;
 import com.chenbitao.noodle_shop.vo.DiscountResult;
@@ -30,19 +32,23 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 public class OrderService {
-    private final IBillingService billingService;
 
     /**
      * 订单合并配置
      */
     @Autowired
     private OrderCombineConfig orderCombineConfig;
-
     @Autowired
     private ProductProperties productProperties;
 
-    public OrderService(BillingServiceImpl billingService) {
+    private final IBillingService billingService;
+    private final CombineMapper combineMapper;
+    private final GoodsMapper goodsMapper;
+
+    public OrderService(BillingServiceImpl billingService, CombineMapper combineMapper, GoodsMapper goodsMapper) {
         this.billingService = billingService;
+        this.combineMapper = combineMapper;
+        this.goodsMapper = goodsMapper;
     }
 
     public DiscountResult calculateWithDiscount(Order order, List<DiscountRule> rules, List<String> excludedCode) {
@@ -58,8 +64,8 @@ public class OrderService {
     public OrderResultVO dealOrder(List<OrderItemRequestVO> items) {
         log.info("收到下单请求: {}", items);
         try {
-            List<Goods> goods = productProperties.getGoods();
-            List<Combine> combines = productProperties.getCombine();
+            List<Goods> goods = this.goodsMapper.selectAllGoods();
+            List<Combine> combines = this.combineMapper.selectAllWithItemsAndGoods();
             Order order = new Order();
             for (OrderItemRequestVO item : items) {
                 log.debug("处理订单项: {}", item);

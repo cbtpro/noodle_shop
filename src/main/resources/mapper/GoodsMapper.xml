@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.chenbitao.noodle_shop.mapper.GoodsMapper">
+
+    <!-- 查询价格大于指定值的商品 -->
+    <select id="selectGoodsByMinPrice" parameterType="int" resultType="com.chenbitao.noodle_shop.domain.Goods">
+        SELECT
+            id,
+            code,
+            name,
+            price,
+            revision,
+            created_by,
+            created_time,
+            updated_by,
+            updated_time,
+            deleted,
+            deleted_by,
+            deleted_time
+        FROM t_base_goods
+        WHERE price > #{minPrice} AND deleted = 0
+    </select>
+
+    <!-- 查询所有未删除的商品 -->
+    <select id="selectAllGoods" resultType="com.chenbitao.noodle_shop.domain.Goods">
+        SELECT
+            id,
+            code,
+            name,
+            price,
+            revision,
+            created_by,
+            created_time,
+            updated_by,
+            updated_time,
+            deleted,
+            deleted_by,
+            deleted_time
+        FROM t_base_goods
+        WHERE deleted = 0
+    </select>
+
+</mapper>

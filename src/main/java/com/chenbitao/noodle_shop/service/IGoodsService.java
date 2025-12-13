@@ -33,10 +33,6 @@ public interface IGoodsService extends IService<Goods> {
 
     String batchDeleteGoodsByIds(List<Long> ids);
 
-    List<Goods> getAdultGoods();
-
-    List<Goods> getComplexGoods();
-
     Page<GoodsVO> getGoodsPageWithCondition(Integer current, Integer size, String keyword);
 
     String partialUpdateGoods(Long id, Map<String, Object> updates);

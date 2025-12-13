@@ -1,7 +1,7 @@
 package com.chenbitao.noodle_shop.vo;
 
-import com.chenbitao.noodle_shop.domain.BaseEntity;
 import com.chenbitao.noodle_shop.domain.Money;
+import com.chenbitao.noodle_shop.domain.base.BaseEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

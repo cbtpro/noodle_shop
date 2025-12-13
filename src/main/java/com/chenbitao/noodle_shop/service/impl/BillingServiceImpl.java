@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.chenbitao.noodle_shop.domain.Combine;
+import com.chenbitao.noodle_shop.domain.CombineItem;
 import com.chenbitao.noodle_shop.domain.DiscountRule;
 import com.chenbitao.noodle_shop.domain.IOrderItem;
 import com.chenbitao.noodle_shop.domain.Money;
@@ -99,8 +100,8 @@ public class BillingServiceImpl implements IBillingService {
                 .collect(Collectors.toMap(e -> e.getKey().getCode(), Map.Entry::getValue));
 
         // 检查套餐里的每个商品是否都存在，且数量 >= 1
-        for (String goodsId : combine.getItems()) {
-            Integer count = orderCountMap.get(goodsId);
+        for (CombineItem combineItem : combine.getItemList()) {
+            Integer count = orderCountMap.get(combineItem.getGoodsCode());
             if (count == null || count < 1) {
                 return false;
             }
@@ -115,8 +116,8 @@ public class BillingServiceImpl implements IBillingService {
                 .collect(Collectors.toMap(IOrderItem::getCode, item -> item));
 
         // 遍历套餐里的商品，逐个在订单中扣减
-        for (String goodsId : combine.getItems()) {
-            IOrderItem item = orderItemMap.get(goodsId);
+        for (CombineItem combineItem : combine.getItemList()) {
+            IOrderItem item = orderItemMap.get(combineItem.getGoodsCode());
             if (item != null) {
                 order.removeItem(item, 1); // 每个套餐项默认扣掉数量1
             }
