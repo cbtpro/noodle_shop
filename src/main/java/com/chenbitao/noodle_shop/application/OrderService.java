@@ -8,18 +8,20 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.chenbitao.noodle_shop.config.OrderCombineConfig;
-import com.chenbitao.noodle_shop.config.ProductProperties;
 import com.chenbitao.noodle_shop.domain.Combine;
 import com.chenbitao.noodle_shop.domain.DiscountRule;
 import com.chenbitao.noodle_shop.domain.Goods;
 import com.chenbitao.noodle_shop.domain.Holiday;
 import com.chenbitao.noodle_shop.domain.Money;
+import com.chenbitao.noodle_shop.domain.NonDiscountGoods;
 import com.chenbitao.noodle_shop.domain.Order;
 import com.chenbitao.noodle_shop.enums.GoodsType;
 import com.chenbitao.noodle_shop.exception.OrderCalculationException;
 import com.chenbitao.noodle_shop.mapper.CombineMapper;
 import com.chenbitao.noodle_shop.mapper.GoodsMapper;
+import com.chenbitao.noodle_shop.mapper.NonDiscountGoodsMapper;
 import com.chenbitao.noodle_shop.service.IBillingService;
 import com.chenbitao.noodle_shop.service.impl.BillingServiceImpl;
 import com.chenbitao.noodle_shop.vo.DiscountResult;
@@ -38,20 +40,20 @@ public class OrderService {
      */
     @Autowired
     private OrderCombineConfig orderCombineConfig;
-    @Autowired
-    private ProductProperties productProperties;
 
     private final IBillingService billingService;
     private final CombineMapper combineMapper;
     private final GoodsMapper goodsMapper;
+    private final NonDiscountGoodsMapper nonDiscountGoodsMapper;
 
-    public OrderService(BillingServiceImpl billingService, CombineMapper combineMapper, GoodsMapper goodsMapper) {
+    public OrderService(BillingServiceImpl billingService, CombineMapper combineMapper, GoodsMapper goodsMapper, NonDiscountGoodsMapper nonDiscountGoodsMapper) {
         this.billingService = billingService;
         this.combineMapper = combineMapper;
         this.goodsMapper = goodsMapper;
+        this.nonDiscountGoodsMapper = nonDiscountGoodsMapper;
     }
 
-    public DiscountResult calculateWithDiscount(Order order, List<DiscountRule> rules, List<String> excludedCode) {
+    public DiscountResult calculateWithDiscount(Order order, List<DiscountRule> rules, List<NonDiscountGoods> excludedCode) {
         log.debug("开始计算折扣: excluded={}, rules={}", excludedCode, rules);
         return billingService.calculateWithDiscount(order, rules, excludedCode);
     }
@@ -116,7 +118,7 @@ public class OrderService {
                 return new OrderResultVO(ifHoliday, Money.ZERO, Money.ZERO, null, rules, null);
             }
             // 不参与折扣的商品
-            List<String> excludedCodes = productProperties.getNonDiscountGoodsCodes();
+            List<NonDiscountGoods> excludedCodes = nonDiscountGoodsMapper.selectList(new QueryWrapper<NonDiscountGoods>());
             log.debug("不参与折扣的商品code列表: {}", excludedCodes);
             Money originalCost = calculateWithoutDiscount(order);
             log.info("订单原价计算完成: {}", originalCost);

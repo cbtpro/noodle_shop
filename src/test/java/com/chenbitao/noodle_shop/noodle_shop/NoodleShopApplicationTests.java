@@ -4,6 +4,7 @@ import com.chenbitao.noodle_shop.application.OrderService;
 import com.chenbitao.noodle_shop.domain.DiscountRule;
 import com.chenbitao.noodle_shop.domain.Goods;
 import com.chenbitao.noodle_shop.domain.Money;
+import com.chenbitao.noodle_shop.domain.NonDiscountGoods;
 import com.chenbitao.noodle_shop.domain.Order;
 import com.chenbitao.noodle_shop.vo.DiscountResult;
 
@@ -45,7 +46,7 @@ class NoodleShopApplicationTests {
 
 		DiscountResult discountResult = orderService.calculateWithDiscount(order,
 				Arrays.asList(new DiscountRule(100, 15), new DiscountRule(50, 5)),
-				Arrays.asList("milk_tea"));
+				Arrays.asList(NonDiscountGoods.builder().code("milk_tea").build()));
 		Money total = discountResult.getFinalPrice();
 		assertEquals(0, total.getAmount().compareTo(BigDecimal.valueOf(48.00)));
 	}
@@ -69,7 +70,7 @@ class NoodleShopApplicationTests {
 		DiscountResult discountResult = orderService.calculateWithDiscount(order,
 				Arrays.asList(new DiscountRule(100, 15),
 						new DiscountRule(50, 5)),
-				Arrays.asList("milk_tea"));
+				Arrays.asList(NonDiscountGoods.builder().code("milk_tea").build()));
 
 		assertEquals(0, discountResult.getFinalPrice().getAmount().compareTo(BigDecimal.valueOf(42.00)));
 	}
@@ -93,7 +94,7 @@ class NoodleShopApplicationTests {
 		DiscountResult discountResult = orderService.calculateWithDiscount(order,
 				Arrays.asList(new DiscountRule(100, 15),
 						new DiscountRule(50, 5)),
-				Arrays.asList("milk_tea"));
+				Arrays.asList(NonDiscountGoods.builder().code("milk_tea").build()));
 
 		assertEquals(0, discountResult.getFinalPrice().getAmount().compareTo(BigDecimal.valueOf(73)));
 	}
@@ -116,7 +117,7 @@ class NoodleShopApplicationTests {
 
 		DiscountResult discountResult = orderService.calculateWithDiscount(order,
 				Arrays.asList(new DiscountRule(50, 5)), // 阈值50，实际消费26
-				Arrays.asList("milk_tea"));
+				Arrays.asList(NonDiscountGoods.builder().code("milk_tea").build()));
 
 		// 总价应为26，不打折
 		assertEquals(0, discountResult.getFinalPrice().getAmount().compareTo(BigDecimal.valueOf(26.00)));
@@ -173,7 +174,7 @@ class NoodleShopApplicationTests {
 
 		DiscountResult discountResult = orderService.calculateWithDiscount(order,
 				Arrays.asList(new DiscountRule(50, 10)),
-				Arrays.asList("milk_tea")); // 奶茶不参与满减
+				Arrays.asList(NonDiscountGoods.builder().code("milk_tea").build())); // 奶茶不参与满减
 
 		// discountBase = 36, 不满足50阈值 -> 不打折
 		assertEquals(0, discountResult.getFinalPrice().getAmount().compareTo(BigDecimal.valueOf(60.00)));
@@ -198,7 +199,7 @@ class NoodleShopApplicationTests {
 
 		DiscountResult discountResult = orderService.calculateWithDiscount(order,
 				Arrays.asList(new DiscountRule(100, 20)), // 满100减20
-				Arrays.asList("milk_tea"));
+				Arrays.asList(NonDiscountGoods.builder().code("milk_tea").build()));
 
 		// discountBase = 90, 不满足100阈值 -> 不打折
 		assertEquals(0, discountResult.getFinalPrice().getAmount().compareTo(BigDecimal.valueOf(114)));
@@ -222,7 +223,7 @@ class NoodleShopApplicationTests {
 
 		DiscountResult discountResult = orderService.calculateWithDiscount(order,
 				Arrays.asList(new DiscountRule(20, 5)), // 满20减5
-				Arrays.asList("beef_cake", "milk_tea"));
+				Arrays.asList(NonDiscountGoods.builder().code("beef_cake").build(), NonDiscountGoods.builder().code("milk_tea").build()));
 
 		// 所有商品都被排除，discountBase=0 -> 不打折
 		assertEquals(0, discountResult.getFinalPrice().getAmount().compareTo(BigDecimal.valueOf(54.00)));

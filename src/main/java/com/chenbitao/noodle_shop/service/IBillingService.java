@@ -6,6 +6,7 @@ import java.util.Map;
 import com.chenbitao.noodle_shop.domain.Combine;
 import com.chenbitao.noodle_shop.domain.DiscountRule;
 import com.chenbitao.noodle_shop.domain.Money;
+import com.chenbitao.noodle_shop.domain.NonDiscountGoods;
 import com.chenbitao.noodle_shop.domain.Order;
 import com.chenbitao.noodle_shop.vo.DiscountResult;
 
@@ -23,7 +24,7 @@ public interface IBillingService {
      * @param order 订单
      * @return  打折后订单总价
      */
-    public DiscountResult calculateWithDiscount(Order order, List<DiscountRule> rules, List<String> excludedCode);
+    public DiscountResult calculateWithDiscount(Order order, List<DiscountRule> rules, List<NonDiscountGoods> excludedCode);
 
     /**
      * 计算订单的原价，不应用任何折扣

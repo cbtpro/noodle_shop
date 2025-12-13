@@ -21,11 +21,14 @@ VALUES
 
 
 INSERT INTO `t_base_combine_item` (`id`,`combine_id`,`goods_code`) VALUES
-(101, 1, 'beef_noodle_large'),
-(102, 1, 'beef_cake'),
-(103, 1, 'milk_tea');
+(1, 1, 'beef_noodle_large'), 
+(2, 1, 'milk_tea');
 
 INSERT INTO `t_base_combine_item` (`id`,`combine_id`,`goods_code`) VALUES
-(201, 2, 'intestine_noodle_large'),
-(202, 2, 'beef_cake'),
-(203, 2, 'milk_tea');
+(3, 2, 'intestine_noodle_large'),
+(4, 2, 'beef_cake'),
+(5, 2, 'milk_tea');
+
+INSERT INTO `t_base_non_discount_goods`
+(`id`, `code`) VALUES
+(1, 'milk_tea');

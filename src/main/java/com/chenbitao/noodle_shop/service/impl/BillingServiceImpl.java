@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import com.chenbitao.noodle_shop.domain.CombineItem;
 import com.chenbitao.noodle_shop.domain.DiscountRule;
 import com.chenbitao.noodle_shop.domain.IOrderItem;
 import com.chenbitao.noodle_shop.domain.Money;
+import com.chenbitao.noodle_shop.domain.NonDiscountGoods;
 import com.chenbitao.noodle_shop.domain.Order;
 import com.chenbitao.noodle_shop.service.IBillingService;
 import com.chenbitao.noodle_shop.vo.DiscountResult;
@@ -36,7 +38,8 @@ public class BillingServiceImpl implements IBillingService {
     }
 
     @Override
-    public DiscountResult calculateWithDiscount(Order order, List<DiscountRule> rules, List<String> excludedCodes) {
+    public DiscountResult calculateWithDiscount(Order order, List<DiscountRule> rules,
+            List<NonDiscountGoods> excludedCodes) {
         // 计算订单原价，包括所有商品
         BigDecimal total = calculateTotal(order).getAmount();
 
@@ -44,10 +47,17 @@ public class BillingServiceImpl implements IBillingService {
         if (rules == null || rules.isEmpty()) {
             return new DiscountResult(new Money(total), List.of());
         }
+        // 步骤一：将 List<NonDiscountGoods> 转换为 Set<String>
+        Set<String> excludedCodesSet = excludedCodes.stream()
+                // 提取每个 NonDiscountGoods 对象的 code 属性
+                .map(NonDiscountGoods::getCode)
+                // 收集到一个 HashSet 中
+                .collect(Collectors.toSet());
+
         // 统计可参与折扣的金额，排除 excluded 中的商品
         BigDecimal discountBase = BigDecimal.ZERO;
         for (IOrderItem item : order.getItems().keySet()) {
-            if (excludedCodes == null || !excludedCodes.contains(item.getCode())) {
+            if (excludedCodes == null || !excludedCodesSet.contains(item.getCode())) {
                 BigDecimal price = item.getPrice();
                 int count = order.getItemCount(item);
                 discountBase = discountBase.add(price.multiply(BigDecimal.valueOf(count)));

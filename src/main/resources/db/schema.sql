@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS `t_base_combine_item`;
 DROP TABLE IF EXISTS `t_base_goods`;
 DROP TABLE IF EXISTS `t_base_combine`;
+DROP TABLE IF EXISTS `t_base_non_discount_goods`;
 
 CREATE TABLE IF NOT EXISTS `t_base_goods` (
     `id` BIGINT NOT NULL COMMENT '主键ID',
@@ -46,9 +47,32 @@ CREATE TABLE IF NOT EXISTS `t_base_combine_item` (
     `id` BIGINT NOT NULL,
     `combine_id` BIGINT NOT NULL COMMENT '套餐ID',
     `goods_code` VARCHAR(64) NOT NULL COMMENT '商品Code',
+    `revision` INT DEFAULT 0,
+    `created_by` VARCHAR(50),
+    `created_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `updated_by` VARCHAR(50),
+    `updated_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deleted` TINYINT DEFAULT 0,
+    `deleted_by` VARCHAR(50),
+    `deleted_time` DATETIME DEFAULT NULL,
 
     PRIMARY KEY (`id`),
     KEY `idx_combine_id` (`combine_id`),
     CONSTRAINT `fk_combine_item_combine` FOREIGN KEY (`combine_id`)
         REFERENCES `t_base_combine` (`id`)
 ) COMMENT='套餐包含商品明细';
+
+CREATE TABLE IF NOT EXISTS `t_base_non_discount_goods` (
+    `id` BIGINT NOT NULL,
+    `code` VARCHAR(64) NOT NULL,
+    `revision` INT DEFAULT 0,
+    `created_by` VARCHAR(50),
+    `created_time` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    `updated_by` VARCHAR(50),
+    `updated_time` DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `deleted` TINYINT DEFAULT 0,
+    `deleted_by` VARCHAR(50),
+    `deleted_time` DATETIME DEFAULT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_non_discount_goods_code` (`code`)
+) COMMENT='不打折商品表';
