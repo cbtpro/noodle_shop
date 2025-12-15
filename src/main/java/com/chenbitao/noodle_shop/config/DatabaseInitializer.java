@@ -1,10 +1,11 @@
 package com.chenbitao.noodle_shop.config;
 
 import com.baomidou.dynamic.datasource.DynamicRoutingDataSource;
-import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner; // ⭐️ 引入 ApplicationRunner
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.init.ScriptUtils;
@@ -17,28 +18,34 @@ import java.sql.SQLException;
 @Slf4j
 @Component
 @Profile({"dev", "test"})
-public class DatabaseInitializer {
+// ⭐️ 实现 ApplicationRunner 接口
+public class DatabaseInitializer implements ApplicationRunner { 
 
-    // ⭐️ 注入 DynamicRoutingDataSource，它是所有数据源的容器
+    // 注入 DynamicRoutingDataSource，它是所有数据源的容器
     @Autowired
     private DynamicRoutingDataSource dynamicDataSource;
 
     private static final String PRIMARY_DATASOURCE_KEY = "primary";
-
-    @PostConstruct
-    public void init() {
+    
+    // ⭐️ 移除 @PostConstruct，将初始化逻辑移至 run 方法
+    @Override
+    public void run(ApplicationArguments args) throws Exception {
+        log.info("▶️ Starting database initialization (via ApplicationRunner)...");
+        
         // 1. 从 DynamicRoutingDataSource 中获取名为 "primary" 的实际 DataSource
         DataSource primaryDataSource = dynamicDataSource.getDataSource(PRIMARY_DATASOURCE_KEY);
 
         if (primaryDataSource == null) {
-            log.info("⚠️ Cannot find primary datasource named '" + PRIMARY_DATASOURCE_KEY + "', skipping initialization.");
+            log.warn("⚠️ Cannot find primary datasource named '" + PRIMARY_DATASOURCE_KEY + 
+                     "'. Please check dynamic datasource configuration. Skipping initialization.");
             return;
         }
 
         try (Connection conn = primaryDataSource.getConnection()) {
             initDatabase(conn);
         } catch (SQLException e) {
-            log.info("⚠️ Failed to initialize primary database connection: " + e.getMessage());
+            log.error("❌ Failed to establish primary database connection.", e);
+            throw new RuntimeException("Primary database connection failed.", e);
         }
     }
 
@@ -47,8 +54,6 @@ public class DatabaseInitializer {
      */
     private void initDatabase(Connection conn) {
         try {
-            // ⚠️ 建议：在 data.sql/schema.sql 顶部加入清理/删除语句，避免多次重启导致冲突
-            
             // 1. 执行建表脚本
             ScriptUtils.executeSqlScript(conn, new ClassPathResource("db/schema.sql"));
             
@@ -57,10 +62,9 @@ public class DatabaseInitializer {
             
             log.info("✅ Primary database schema and data initialized successfully.");
         } catch (Exception e) {
-            log.info("⚠️ Failed to initialize primary database: " + e.getMessage());
+            log.error("❌ Failed to initialize primary database.", e);
             // 重新抛出 RuntimeException 确保启动失败，以便于调试
             throw new RuntimeException("Primary database initialization failed.", e);
         }
     }
-
 }

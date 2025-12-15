@@ -5,7 +5,7 @@ spring:
     restart:
       enabled: true
   application:
-    name: x
+    name: noodle_shop_dev
   datasource:
     dynamic:
       primary: primary   # 默认数据源
@@ -16,6 +16,12 @@ spring:
           username: noodle_shop
           password: noodle_shop
           driver-class-name: com.mysql.cj.jdbc.Driver
+          # 已经使用了DatabaseInitializer,就不需要启用下面的配置
+          # init:  
+          #   schema: classpath:db/schema.sql  # 建表脚本  
+          #   data: classpath:db/data.sql      # 插入数据脚本  
+          #   continue-on-error: false         # 是否在错误时继续  
+          #   separator: ;                     # SQL分隔符
           hikari:
             maximum-pool-size: 5  # 降低到 5 个连接
         cluster1:
@@ -32,10 +38,6 @@ spring:
           driver-class-name: com.mysql.cj.jdbc.Driver
           hikari:
             maximum-pool-size: 5  # 降低到 5
-  # sql:
-  #   init:
-  #     schema-locations: classpath:db/schema.sql
-  #     data-locations: classpath:db/data.sql
 
 # MyBatis-Plus 配置
 mybatis-plus:
