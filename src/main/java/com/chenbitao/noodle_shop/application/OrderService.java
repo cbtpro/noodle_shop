@@ -1,22 +1,8 @@
 package com.chenbitao.noodle_shop.application;
 
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.chenbitao.noodle_shop.config.OrderCombineConfig;
-import com.chenbitao.noodle_shop.domain.Combine;
-import com.chenbitao.noodle_shop.domain.DiscountRule;
-import com.chenbitao.noodle_shop.domain.Goods;
-import com.chenbitao.noodle_shop.domain.Holiday;
-import com.chenbitao.noodle_shop.domain.Money;
-import com.chenbitao.noodle_shop.domain.NonDiscountGoods;
-import com.chenbitao.noodle_shop.domain.Order;
+import com.chenbitao.noodle_shop.domain.*;
 import com.chenbitao.noodle_shop.enums.GoodsType;
 import com.chenbitao.noodle_shop.exception.OrderCalculationException;
 import com.chenbitao.noodle_shop.mapper.CombineMapper;
@@ -28,23 +14,28 @@ import com.chenbitao.noodle_shop.vo.DiscountResult;
 import com.chenbitao.noodle_shop.vo.OrderItemRequestVO;
 import com.chenbitao.noodle_shop.vo.OrderItemVO;
 import com.chenbitao.noodle_shop.vo.OrderResultVO;
-
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class OrderService {
 
+    private final IBillingService billingService;
+    private final CombineMapper combineMapper;
+    private final GoodsMapper goodsMapper;
+    private final NonDiscountGoodsMapper nonDiscountGoodsMapper;
     /**
      * 订单合并配置
      */
     @Autowired
     private OrderCombineConfig orderCombineConfig;
-
-    private final IBillingService billingService;
-    private final CombineMapper combineMapper;
-    private final GoodsMapper goodsMapper;
-    private final NonDiscountGoodsMapper nonDiscountGoodsMapper;
 
     public OrderService(BillingServiceImpl billingService, CombineMapper combineMapper, GoodsMapper goodsMapper, NonDiscountGoodsMapper nonDiscountGoodsMapper) {
         this.billingService = billingService;
@@ -76,20 +67,14 @@ public class OrderService {
                     GoodsType goodType = item.getType();
                     if (goodType == GoodsType.GOOD) {
                         // 处理普通商品
-                        Goods good = goods.stream()
-                                .filter(g -> g.getCode().equals(item.getCode()))
-                                .findFirst()
-                                .orElseThrow(() -> new OrderCalculationException("商品不存在: " + item.getGoodName()));
+                        Goods good = goods.stream().filter(g -> g.getCode().equals(item.getCode())).findFirst().orElseThrow(() -> new OrderCalculationException("商品不存在: " + item.getGoodName()));
                         // 根据商品名获取 Goods，再添加对应数量
                         log.debug("添加商品到订单: {} x {}", good.getName(), count);
                         order.addItem(good, count);
                     } else if (goodType == GoodsType.COMBINE) {
                         // 处理套餐
-                        Combine combine = combines.stream()
-                                .filter(sm -> sm.getCode().equals(item.getCode()))
-                                .findFirst()
-                                .orElseThrow(() -> new OrderCalculationException("套餐不存在: " + item.getGoodName()));
-                        
+                        Combine combine = combines.stream().filter(sm -> sm.getCode().equals(item.getCode())).findFirst().orElseThrow(() -> new OrderCalculationException("套餐不存在: " + item.getGoodName()));
+
                         log.debug("添加套餐到订单: {} x {}", combine.getName(), count);
                         order.addItem(combine, count);
                     }
@@ -110,7 +95,8 @@ public class OrderService {
             // 设置打折规则
             List<DiscountRule> rules = Arrays.asList(
                     new DiscountRule(100, 15),
-                    new DiscountRule(30, 5));
+                    new DiscountRule(30, 5)
+            );
 
             if (order.getItemTotal() == 0) {
                 log.warn("订单为空，直接返回");
@@ -122,13 +108,17 @@ public class OrderService {
             log.debug("不参与折扣的商品code列表: {}", excludedCodes);
             Money originalCost = calculateWithoutDiscount(order);
             log.info("订单原价计算完成: {}", originalCost);
+
             Money finalCost = originalCost;
-            DiscountResult discountResult = null;
+            List<DiscountRule> appliedRules = null;
+
             if (ifHoliday) {
                 log.debug("开始节假日折扣计算...");
-                discountResult = calculateWithDiscount(order, rules, excludedCodes);
+                DiscountResult discountResult = calculateWithDiscount(order, rules, excludedCodes);
+
                 finalCost = discountResult.getFinalPrice();
-                log.info("折扣计算完成: 最终价格={}, 使用规则={}", finalCost, discountResult.getApplied());
+                appliedRules = discountResult.getApplied();
+                log.info("折扣计算完成: 最终价格={}, 使用规则={}", finalCost, appliedRules);
             }
             // 测试异常情况
             // throw new OrderCalculationException("计算订单价格失败");
@@ -140,7 +130,14 @@ public class OrderService {
                             e.getValue()))
                     .collect(Collectors.toList());
             log.info("订单计算完成，返回结果");
-            return new OrderResultVO(ifHoliday, originalCost, finalCost, itemVOs, rules, discountResult.getApplied());
+            return new OrderResultVO(
+                    ifHoliday,
+                    originalCost,
+                    finalCost,
+                    itemVOs,
+                    rules,
+                    appliedRules
+            );
         } catch (OrderCalculationException e) {
             log.error("订单业务异常: {}", e.getMessage(), e);
             throw new OrderCalculationException("计算订单价格失败", e);
