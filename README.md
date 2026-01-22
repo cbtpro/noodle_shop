@@ -1,5 +1,7 @@
 # 牛肉面算账系统
 
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/cbtpro/noodle_shop)
+
 一个基于 Spring Boot 的牛肉面店订单计算系统，支持商品管理、套餐组合、折扣计算等功能。
 
 ## 系统特性
