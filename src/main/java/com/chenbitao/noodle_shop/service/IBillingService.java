@@ -17,21 +17,21 @@ public interface IBillingService {
      * @param order 订单
      * @return  订单总价
      */
-    public Money calculateTotal(Order order);
+    Money calculateTotal(Order order);
 
     /**
      * 计算订单打折后的总价
      * @param order 订单
      * @return  打折后订单总价
      */
-    public DiscountResult calculateWithDiscount(Order order, List<DiscountRule> rules, List<NonDiscountGoods> excludedCode);
+    DiscountResult calculateWithDiscount(Order order, List<DiscountRule> rules, List<NonDiscountGoods> excludedCode);
 
     /**
      * 计算订单的原价，不应用任何折扣
      * @param order 订单
      * @return  订单原价
      */
-    public Money calculateWithoutDiscount(Order order);
+    Money calculateWithoutDiscount(Order order);
 
     /**
      * 贪心算法自动匹配套餐
@@ -39,11 +39,11 @@ public interface IBillingService {
      * @param combines 套餐
      * @return order 匹配的套餐数量
      */
-    public Map<Combine, Integer> matchSetMeals(Order order, List<Combine> combines);
+    Map<Combine, Integer> matchSetMeals(Order order, List<Combine> combines);
 
     /** 判断订单里是否还可以再用一个套餐 */
-    public boolean canApplyCombine(Order order, Combine combine);
+    boolean canApplyCombine(Order order, Combine combine);
 
     /** 从订单中扣掉一个套餐对应的商品数量 */
-    public void applyCombine(Order order, Combine combine);
+    void applyCombine(Order order, Combine combine);
 }

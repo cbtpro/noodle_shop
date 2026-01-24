@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -84,7 +85,8 @@ public class OrderService {
             // 匹配套餐,将订单中符合套餐的商品进行组合
             if (orderCombineConfig.isAuto()) {
                 log.debug("自动匹配套餐规则已开启，尝试根据组合规则调整订单...");
-                billingService.matchSetMeals(order, combines);
+                Map<Combine, Integer> combineMap = billingService.matchSetMeals(order, combines);
+                log.info("自动匹配套餐结果 combineMap={}", combineMap);
             }
 
             // 判断是否节假日
