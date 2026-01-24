@@ -55,5 +55,6 @@ mybatis-plus:
 
 logging:
   level:
+    root: info
     com.baomidou.dynamic.datasource: debug
     com.zaxxer.hikari: debug
