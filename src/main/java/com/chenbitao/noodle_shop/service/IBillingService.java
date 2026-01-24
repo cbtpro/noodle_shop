@@ -35,8 +35,8 @@ public interface IBillingService {
 
     /**
      * 贪心算法自动匹配套餐
-     * @param order
-     * @param combines
+     * @param order 订单
+     * @param combines 套餐
      * @return order 匹配的套餐数量
      */
     public Map<Combine, Integer> matchSetMeals(Order order, List<Combine> combines);

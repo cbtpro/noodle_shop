@@ -2,23 +2,19 @@ package com.chenbitao.noodle_shop.service;
 
 import java.time.LocalDateTime;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.chenbitao.noodle_shop.domain.base.BaseEntity;
 
 @Service
+@NoArgsConstructor
+@AllArgsConstructor
 public class BaseService<T extends BaseEntity<?>> {
 
     private BaseMapper<T> baseMapper;
-
-    // 无参构造器
-    public BaseService() {
-    }
-
-    public BaseService(BaseMapper<T> baseMapper) {
-        this.baseMapper = baseMapper;
-    }
 
     public boolean logicDeleteById(Long id) {
         T entity = baseMapper.selectById(id);

@@ -29,7 +29,7 @@ public class DatabaseInitializer implements ApplicationRunner {
     
     // ⭐️ 移除 @PostConstruct，将初始化逻辑移至 run 方法
     @Override
-    public void run(ApplicationArguments args) throws Exception {
+    public void run(ApplicationArguments args) {
         log.info("▶️ Starting database initialization (via ApplicationRunner)...");
         
         // 1. 从 DynamicRoutingDataSource 中获取名为 "primary" 的实际 DataSource
