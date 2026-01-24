@@ -1,7 +1,6 @@
 package com.chenbitao.noodle_shop.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -26,11 +25,18 @@ public enum GoodsType {
 
     @JsonCreator
     public static GoodsType fromType(String type) {
+        return of(type);
+    }
+
+    public static GoodsType of(String type) {
+        if (type == null) {
+            return null;
+        }
         for (GoodsType gt : values()) {
             if (gt.code.equalsIgnoreCase(type)) {
                 return gt;
             }
         }
-        throw new IllegalArgumentException("Unknown type: " + type);
+        throw new IllegalArgumentException("Unknown GoodsType code: " + type);
     }
 }
