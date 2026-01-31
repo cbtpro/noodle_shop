@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.chenbitao.noodle_shop.annotation.LogExecutionTime;
 import org.springframework.stereotype.Service;
 
 import com.chenbitao.noodle_shop.domain.Combine;
@@ -85,6 +86,7 @@ public class BillingServiceImpl implements IBillingService {
         return calculateTotal(order);
     }
 
+    @LogExecutionTime(logArgs = true, logResult = true)
     public Map<Combine, Integer> matchSetMeals(Order order, List<Combine> combines) {
         Map<Combine, Integer> result = new HashMap<>();
 

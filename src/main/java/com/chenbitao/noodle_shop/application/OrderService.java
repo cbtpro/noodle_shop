@@ -1,6 +1,7 @@
 package com.chenbitao.noodle_shop.application;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.chenbitao.noodle_shop.annotation.LogExecutionTime;
 import com.chenbitao.noodle_shop.config.OrderCombineConfig;
 import com.chenbitao.noodle_shop.domain.*;
 import com.chenbitao.noodle_shop.enums.GoodsType;
@@ -54,7 +55,11 @@ public class OrderService {
         log.debug("开始计算订单原价...");
         return billingService.calculateWithoutDiscount(order);
     }
-
+    @LogExecutionTime(
+            prefix = "计算订单",
+            logArgs = true,
+            logResult = true
+    )
     public OrderResultVO dealOrder(List<OrderItemRequestVO> items) {
         log.info("收到下单请求: {}", items);
         try {
